@@ -5,7 +5,7 @@ on:
     workflows:
       - "Continous Integration (CI)"
     branches:
-      - master
+      - main
     types:
       - completed
 
