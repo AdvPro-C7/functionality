@@ -1,8 +1,13 @@
 name: Continous Deployment (CD)
 
 on:
-  push:
-  pull_request:
+  workflow_run:
+    workflows:
+      - "Continous Integration (CI)"
+    branches:
+      - master
+    types:
+      - completed
 
 jobs:
   build:
