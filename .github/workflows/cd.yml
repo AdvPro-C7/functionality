@@ -43,3 +43,8 @@ jobs:
           --set-env-vars=PG_HOST=${{ secrets.PG_HOST }} \
           --set-env-vars=PG_USER=${{ secrets.PG_USER }} \
           --set-env-vars=PG_PASS=${{ secrets.PG_PASS }}
+      - name: Debug Secrets
+        run: |
+          echo "PG_HOST: ${{ secrets.PG_HOST }}"
+          echo "PG_USER: ${{ secrets.PG_USER }}"
+          echo "PG_PASS: ${{ secrets.PG_PASS }}"
