@@ -23,19 +23,12 @@ jobs:
       - name: Configure Docker
         run: |
           gcloud auth configure-docker
-
       - name: Build
         run: |
           docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/functionality:latest .
-
       - name: Push
         run: |
           docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/functionality:latest
-      - name: Debug Secrets
-        run: |
-          echo "PG_HOST: ${{ secrets.PG_HOST }}"
-          echo "PG_USER: ${{ secrets.PG_USER }}"
-          echo "PG_PASS: ${{ secrets.PG_PASS }}"
       - name: Deploy
         run: |
           gcloud run deploy functionality \
@@ -45,6 +38,5 @@ jobs:
           --allow-unauthenticated \
           --project ${{ secrets.GCP_PROJECT_ID }} \
           --set-env-vars=PG_HOST=${{ secrets.PG_HOST }} \
-          --set-env-vars=PG_USER=${{ secrets.PG_USER }} \
-          --set-env-vars=PG_PASS=${{ secrets.PG_PASS }}
-
+          --set-env-vars=PG_DB=${{ secrets.PG_USER }} \
+          --set-env-vars=PG_USER=${{ secrets.PG_PASS }}
