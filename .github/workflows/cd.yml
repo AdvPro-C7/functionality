@@ -34,12 +34,12 @@ jobs:
 
       - name: Deploy
         run: |
-          gcloud run deploy functionality \
+          gcloud run deploy heymart-auth \
           --region europe-west1 \
           --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/functionality \
           --platform managed \
           --allow-unauthenticated \
-          --project ${{ secrets.GCP_PROJECT_ID }} \    
-          "--set-env-vars=PG_HOST=${{ secrets.PG_HOST }}" \
-          "--set-env-vars=PG_USER=${{ secrets.PG_USER }}" \
-          "--set-env-vars=PG_PASS=${{ secrets.PG_PASS }}"
+          --project ${{ secrets.GCP_PROJECT_ID }} \
+          --set-env-vars=PG_HOST=${{ secrets.PG_HOST }} \
+          --set-env-vars=PG_DB=${{ secrets.PG_USER }} \
+          --set-env-vars=PG_USER=${{ secrets.PG_PASS }}
