@@ -9,7 +9,7 @@ public class CartItemTest {
 
     @BeforeEach
     public void setUp() {
-        Book book = new Book("title", "author", 100);
+        book = new Book("title", "author", 100);
     }
     
     @Test
