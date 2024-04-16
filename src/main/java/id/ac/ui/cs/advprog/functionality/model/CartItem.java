@@ -1,5 +1,5 @@
 package id.ac.ui.cs.advprog.functionality.model;
-import org.checkerframework.checker.units.qual.C;
+
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -12,7 +12,7 @@ public class CartItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
     @Getter
-    private Long id;
+    private Integer id;
     
     @ManyToOne
     @JoinColumn(name = "book_id")
@@ -23,7 +23,23 @@ public class CartItem {
     @Column(name = "quantity")
     @Getter
     @Setter
-    private int quantity;
-    
-    
+    private Integer quantity;
+
+    public CartItem() {
+        this.quantity = 0;
+    }
+
+    public CartItem(Book book,Integer quantity) {
+        this.book = book;
+        this.quantity = quantity;
+    }
+
+    public void increaseQuantity() {
+        this.quantity++;
+    }
+
+    public void decreaseQuantity() {
+        this.quantity--;
+    }
+
 }
