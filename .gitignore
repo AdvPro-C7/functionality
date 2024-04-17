@@ -42,3 +42,4 @@ out/
 ### direnv ###
 .direnv
 .envrc
+.DS_Store
