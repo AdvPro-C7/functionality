@@ -1,44 +1,40 @@
 package id.ac.ui.cs.advprog.functionality.controller;
 
-import id.ac.ui.cs.advprog.functionality.model.Cart;
 import id.ac.ui.cs.advprog.functionality.model.CartItem;
-import id.ac.ui.cs.advprog.functionality.service.CartService;
+import id.ac.ui.cs.advprog.functionality.service.CartItemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/cart")
-public class CartController {
+@RequestMapping("/cartItem")
+public class CartItemController {
 
-    private final CartService cartService;
+    private final CartItemService cartItemService;
 
     @Autowired
-    public CartController(CartService cartService) {
-        this.cartService = cartService;
-    }
-
-    @PostMapping("/addItem")
-    public Cart addItemToCart(@RequestParam Integer cartId, @RequestBody CartItem cartItem) {
-        return cartService.addItemToCart(cartId, cartItem);
-    }
-
-    @PostMapping("/deleteItem")
-    public boolean deleteItemFromCart(@RequestParam Integer cartId, @RequestBody CartItem cartItem) {
-        return cartService.deleteItemFromCart(cartId, cartItem);
-    }
-
-    @PostMapping("/deleteAllItems")
-    public boolean deleteAllItemsFromCart(@RequestParam Integer cartId) {
-        return cartService.deleteAllItemsFromCart(cartId);
-    }
-
-    @GetMapping("/findCart")
-    public Cart findCartByUserId(@RequestParam Integer userId) {
-        return cartService.findCartByUserId(userId);
+    public CartItemController(CartItemService cartItemService) {
+        this.cartItemService = cartItemService;
     }
 
     @PostMapping("/create")
-    public Cart createCart(@RequestParam Integer userId) { 
-        return cartService.createCart(userId);
+    public ResponseEntity<CartItem> createCartItem(@RequestBody CartItem cartItem) {
+        CartItem createdCartItem = cartItemService.createCartItem(cartItem);
+        if (createdCartItem != null) {
+            return ResponseEntity.ok(createdCartItem);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<Boolean> deleteCartItem(@RequestBody CartItem cartItem) {
+        boolean deleted = cartItemService.deleteCartItem(cartItem);
+        if (deleted) {
+            return ResponseEntity.ok(true);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
