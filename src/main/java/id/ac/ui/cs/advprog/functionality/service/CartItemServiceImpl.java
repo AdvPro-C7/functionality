@@ -6,7 +6,7 @@ import id.ac.ui.cs.advprog.functionality.model.Book;
 import id.ac.ui.cs.advprog.functionality.model.CartItem;
 import id.ac.ui.cs.advprog.functionality.repository.CartItemRepository;
 
-public class CartItemServiceImpl {
+public class CartItemServiceImpl implements CartItemService{
     @Autowired
     private CartItemRepository cartItemRepository;
 
@@ -19,6 +19,10 @@ public class CartItemServiceImpl {
     }
 
     public boolean deleteCartItem(CartItem cartItem) {
+        if(cartItemRepository.findById(cartItem.getId())!=null){
+            cartItemRepository.delete(cartItem);
+            return true;
+        }
         return false;
     }
 }

@@ -35,7 +35,7 @@ public class CartItemServiceImplTest {
     }
 
     @Test
-    public void testAddCartItem() {
+    public void testCreateCartItem() {
         book = new Book();
         book.setTitle("Test Book");
         book.setAuthor("Test Author");
@@ -47,8 +47,14 @@ public class CartItemServiceImplTest {
     }
 
     @Test
-    public void testRemoveCartItem() {
-        cartItem = new CartItem(book, 1);
+    public void testDeleteCartItem() {
+        book = new Book();
+        book.setTitle("Test Book");
+        book.setAuthor("Test Author");
+        book.setPrice(20000);
+        CartItem cartItem = new CartItem(book, 1);
+        assertNotNull(cartItem);
+        assertTrue(cartItemService.deleteCartItem(cartItem));
         
     }
 }

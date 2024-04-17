@@ -10,6 +10,8 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
+    @Getter
+    @Setter
     private Integer id;
 
     @Column(name = "username", updatable = false, nullable = false, unique = true)
@@ -27,8 +29,4 @@ public class User {
     @Setter
     private String role;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Getter
-    @Setter
-    private Cart cart;
 }

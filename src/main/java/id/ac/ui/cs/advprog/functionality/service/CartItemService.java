@@ -7,6 +7,6 @@ import id.ac.ui.cs.advprog.functionality.model.CartItem;
 
 @Service
 public interface CartItemService {
-    public CartItem createCartItem(Book book, int quantity);
+    public CartItem createCartItem(CartItem cartItem);
     public boolean deleteCartItem(CartItem cartItem);
 }

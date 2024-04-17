@@ -12,6 +12,7 @@ public class CartItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
     @Getter
+    @Setter
     private Integer id;
     
     @ManyToOne

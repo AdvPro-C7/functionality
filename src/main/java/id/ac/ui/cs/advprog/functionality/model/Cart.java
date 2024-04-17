@@ -10,16 +10,10 @@ import java.util.*;
 @Table(name = "cart")
 public class Cart {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
     @Getter
-    private Integer id;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    @Getter
     @Setter
-    private User user;
+    private Integer id;
 
     @Getter
     @Setter
@@ -30,7 +24,7 @@ public class Cart {
     }
 
     public Cart(User user) {
-        this.user = user;
+        this.id = user.getId();
         this.cartItems = new ArrayList<>();
     }
 
