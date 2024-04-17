@@ -25,11 +25,6 @@ public class CartItem {
     @Setter
     private Integer quantity;
 
-    @ManyToOne
-    @JoinColumn(name = "cart_id")
-    @Getter
-    @Setter
-    private Cart cart;
 
     public CartItem() {
         this.quantity = 0;
@@ -48,13 +43,5 @@ public class CartItem {
         this.quantity--;
     }
 
-    public void setCart(Cart cart) {
-        this.cart = cart;
-    }
-
-    public Cart getCart() {
-        return this.cart;
-    }
     
-
 }
