@@ -20,7 +20,7 @@ public class CartItemServiceImplTest {
     @InjectMocks
     private CartItemServiceImpl cartItemService;
 
-    @InjectMocks
+    @Mock
     private CartItemRepository cartItemRepository;
 
     @Mock
@@ -40,8 +40,10 @@ public class CartItemServiceImplTest {
         book.setTitle("Test Book");
         book.setAuthor("Test Author");
         book.setPrice(20000);
+        CartItem cartItem = new CartItem(book, 1);
+        
         assertNotNull(cartItem);
-        assertEquals(book, cartItemService.addCartItem(book, 1).getBook());
+        assertEquals(book, cartItemService.createCartItem(cartItem).getBook());
     }
 
     @Test

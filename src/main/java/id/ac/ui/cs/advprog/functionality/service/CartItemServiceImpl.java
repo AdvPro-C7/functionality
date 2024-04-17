@@ -10,11 +10,15 @@ public class CartItemServiceImpl {
     @Autowired
     private CartItemRepository cartItemRepository;
 
-    public CartItem addCartItem(Book book, int quantity) {
+    public CartItem createCartItem(CartItem cartItem) {
+        if(cartItemRepository.findById(cartItem.getId())!=null){
+            cartItemRepository.save(cartItem);
+            return cartItem;
+        }
         return null;
     }
 
-    public boolean removeCartItem(CartItem cartItem) {
+    public boolean deleteCartItem(CartItem cartItem) {
         return false;
     }
 }
