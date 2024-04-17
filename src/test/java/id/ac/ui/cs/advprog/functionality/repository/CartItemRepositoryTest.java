@@ -62,4 +62,15 @@ public class CartItemRepositoryTest {
         assertNotNull(updatedCartItem);
         assertEquals(1, updatedCartItem.getQuantity());
     }
+
+    @Test
+    public void testDeleteCartItem() {
+        CartItem cartItem = new CartItem(book, 1);
+        cartItemRepository.save(cartItem);
+
+        cartItemRepository.delete(cartItem);
+        CartItem deletedCartItem = cartItemRepository.findById(cartItem.getId()).orElse(null);
+
+        assertEquals(null, deletedCartItem);
+    }
 }
