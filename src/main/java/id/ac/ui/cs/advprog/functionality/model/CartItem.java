@@ -25,6 +25,11 @@ public class CartItem {
     @Setter
     private Integer quantity;
 
+    @ManyToOne
+    @JoinColumn(name = "cart_id")
+    @Getter
+    @Setter
+    private Cart cart;
 
     public CartItem() {
         this.quantity = 0;
