@@ -110,4 +110,30 @@ public class CartRepositoryTest {
         assertEquals(2, updatedCart.getCartItems().size());
     }
 
+    @Test
+    public void testRemoveMoreThanOne(){
+        Cart cart = new Cart(user);
+        cartRepository.save(cart);
+
+        CartItem cartItem = new CartItem(book, 1);
+        cartItemRepository.save(cartItem);
+
+        cart.addCartItem(cartItem);
+        cartRepository.save(cart);
+
+        CartItem cartItem2 = new CartItem(book, 1);
+        cartItemRepository.save(cartItem2);
+
+        cart.addCartItem(cartItem2);
+        cartRepository.save(cart);
+
+        cart.removeCartItem(cartItem);
+        cartRepository.save(cart);
+
+        Cart updatedCart = cartRepository.findById(cart.getId()).orElse(null);
+
+        assertNotNull(updatedCart);
+        assertEquals(1, updatedCart.getCartItems().size());
+    }
+
 }
