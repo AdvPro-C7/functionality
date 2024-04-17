@@ -13,6 +13,16 @@ public class CartServiceImpl implements CartService {
     @Autowired
     private CartRepository cartRepository;
 
+    public Cart createCart(Integer userId) {
+        if(cartRepository.findById(userId)!=null){
+            Cart cart = new Cart();
+            cart.setId(userId);
+            cartRepository.save(cart);
+            return cart;
+        }
+        return null;
+    }
+
     public Cart addItemToCart(Integer cartId,CartItem cartItem){
         Optional<Cart> cartRetrieved = cartRepository.findById(cartId);
         if(cartRetrieved.isPresent()){
