@@ -3,7 +3,8 @@ package id.ac.ui.cs.advprog.functionality.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import java.util.List;
+import java.util.*;
+
 
 @Entity
 @Table(name = "cart")
@@ -21,6 +22,7 @@ public class Cart {
     private User user;
 
     @Getter
+    @Setter
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CartItem> cartItems;
 
@@ -29,6 +31,16 @@ public class Cart {
 
     public Cart(User user) {
         this.user = user;
+        this.cartItems = new ArrayList<>();
     }
+
+    public void addCartItem(CartItem cartItem) {
+        this.cartItems.add(cartItem);
+    }
+
+    public void removeCartItem(CartItem cartItem) {
+        this.cartItems.remove(cartItem);
+    }
+    
 
 }

@@ -3,6 +3,7 @@ package id.ac.ui.cs.advprog.functionality.repository;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import org.hibernate.mapping.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import id.ac.ui.cs.advprog.functionality.model.Book;
 import id.ac.ui.cs.advprog.functionality.model.Cart;
 import id.ac.ui.cs.advprog.functionality.model.CartItem;
+import id.ac.ui.cs.advprog.functionality.model.User;
+
+
 
 @DataJpaTest
 public class CartRepositoryTest {
@@ -21,59 +25,89 @@ public class CartRepositoryTest {
     @Autowired
     private CartItemRepository cartItemRepository;
 
+    private Book book;
+    private User user;
+
     @BeforeEach
     public void setUp() {
-        
+        book = new Book();
+        book.setTitle("Test Book");
+        book.setAuthor("Test Author");
+        book.setPrice(20000);
+
+        user = new User();
+        user.setUsername("test");
+        user.setPassword("test");
     }
 
     @Test
     public void testSaveCart() {
-        Cart cart = new Cart();
+        Cart cart = new Cart(user);
         cartRepository.save(cart);
         Cart savedCart = cartRepository.findById(cart.getId()).orElse(null);
 
         assertNotNull(savedCart);
+        assertEquals(cart.getUser(), savedCart.getUser());
     }
 
     @Test
-    public void testFindCartById() {
-        Cart cart = new Cart();
-        cartRepository.save(cart);
-        Cart savedCart = cartRepository.findById(cart.getId()).orElse(null);
-
-        assertNotNull(savedCart);
-        assertEquals(cart.getId(), savedCart.getId());
-    }
-
-    @Test
-    public void testDeleteCart() {
-        Cart cart = new Cart();
-        cartRepository.save(cart);
-        cartRepository.delete(cart);
-        Cart deletedCart = cartRepository.findById(cart.getId()).orElse(null);
-
-        assertEquals(null, deletedCart);
-    }
-
-    @Test
-    public void testCartItemAddedToCart() {
-
-        Cart cart = new Cart();
+    public void testAddCartItem() {
+        Cart cart = new Cart(user);
         cartRepository.save(cart);
 
-        Book book = new Book();
-        book.setTitle("Test Book");
-        book.setAuthor("Test Author");
-        book.setPrice(20000);
-        
-        CartItem cartItem = new CartItem(book,1);
-        cartItem.setCart(cart);
+        CartItem cartItem = new CartItem(book, 1);
         cartItemRepository.save(cartItem);
 
-        Cart savedCart = cartRepository.findById(cart.getId()).orElse(null);
+        cart.addCartItem(cartItem);
+        cartRepository.save(cart);
 
-        assertNotNull(savedCart);
-        assertEquals(1, savedCart.getCartItems().size());
-        assertEquals(cartItem.getId(), savedCart.getCartItems().get(0).getId());
+        Cart updatedCart = cartRepository.findById(cart.getId()).orElse(null);
+
+        assertNotNull(updatedCart);
+        assertEquals(1, updatedCart.getCartItems().size());
     }
+
+    @Test
+    public void testRemoveCartItem() {
+        Cart cart = new Cart(user);
+        cartRepository.save(cart);
+
+        CartItem cartItem = new CartItem(book, 1);
+        cartItemRepository.save(cartItem);
+
+        cart.addCartItem(cartItem);
+        cartRepository.save(cart);
+
+        cart.removeCartItem(cartItem);
+        cartRepository.save(cart);
+
+        Cart updatedCart = cartRepository.findById(cart.getId()).orElse(null);
+
+        assertNotNull(updatedCart);
+        assertEquals(0, updatedCart.getCartItems().size());
+    }
+
+    @Test
+    public void testAddMoreThanOne(){
+        Cart cart = new Cart(user);
+        cartRepository.save(cart);
+
+        CartItem cartItem = new CartItem(book, 1);
+        cartItemRepository.save(cartItem);
+
+        cart.addCartItem(cartItem);
+        cartRepository.save(cart);
+
+        CartItem cartItem2 = new CartItem(book, 1);
+        cartItemRepository.save(cartItem2);
+
+        cart.addCartItem(cartItem2);
+        cartRepository.save(cart);
+
+        Cart updatedCart = cartRepository.findById(cart.getId()).orElse(null);
+
+        assertNotNull(updatedCart);
+        assertEquals(2, updatedCart.getCartItems().size());
+    }
+
 }

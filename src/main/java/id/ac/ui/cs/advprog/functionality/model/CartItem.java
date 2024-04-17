@@ -15,7 +15,7 @@ public class CartItem {
     private Integer id;
     
     @ManyToOne
-    @JoinColumn(name = "book_id")
+    @JoinColumn(name = "book_id",referencedColumnName = "id")
     @Getter
     @Setter
     private Book book;
@@ -26,7 +26,7 @@ public class CartItem {
     private Integer quantity;
 
     @ManyToOne
-    @JoinColumn(name = "cart_id")
+    @JoinColumn(name = "cart_id",referencedColumnName = "id")
     @Getter
     @Setter
     private Cart cart;
