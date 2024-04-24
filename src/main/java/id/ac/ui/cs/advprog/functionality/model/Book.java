@@ -1,27 +1,76 @@
 package id.ac.ui.cs.advprog.functionality.model;
 
-public class Book {
-    private String title;
-    private String author;
-    private int year;
+import jakarta.persistence.*;
+import lombok.Getter;
 
-    public Book(String title, String author, int year) {
+@Getter
+
+@Entity
+@Table(name = "book", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"title", "author"})
+})
+
+public class Book {
+
+    @Id
+    @GeneratedValue (strategy = GenerationType.AUTO)
+    @Column(name = "id", updatable = false, nullable = false)
+    int id;
+
+    @Column(name = "title", updatable = false, nullable = false)
+    String title;
+
+    @Column(name = "author", updatable = false, nullable = false)
+    String author;
+
+    @Column(name = "publisher", nullable = false)
+    String publisher;
+
+    @Column(name = "price")
+    double price;
+
+    @Column(name = "description", nullable = false)
+    String description;
+
+    @Column(name = "stock")
+    int stock;
+
+    @Column(name = "publish_date", nullable = false)
+    String publishDate;
+
+    @Column(name = "isbn", nullable = false)
+    String isbn;
+
+    @Column(name = "pages")
+    int pages;
+
+    @Column(name = "cover_picture", nullable = false)
+    String coverPicture;
+
+    @Column(name = "category", nullable = false)
+    String category;
+
+    @Column(name = "sold", nullable = false)
+    int sold;
+
+    public Book(){
+
+    }
+
+    public Book(int id, String title, String author, String publisher, double price, String description,
+                int stock, String publishDate, String isbn, int pages, String coverPicture, String category, int sold){
+        this.id = id;
         this.title = title;
         this.author = author;
-        this.year = year;
-    }
-
-    // Getters and setters
-    public String getTitle() {
-        return title;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-
-    public int getYear() {
-        return year;
+        this.publisher = publisher;
+        this.price = price;
+        this.description = description;
+        this.stock = stock;
+        this.publishDate = publishDate;
+        this.isbn = isbn;
+        this.pages = pages;
+        this.coverPicture = coverPicture;
+        this.category = category;
+        this.sold = sold;
     }
 }
