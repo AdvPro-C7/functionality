@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import id.ac.ui.cs.advprog.functionality.model.Cart;
 import id.ac.ui.cs.advprog.functionality.model.CartItem;
 
-@Service
+
 public interface CartService {
     public Cart createCart(Integer userId);
     public Cart addItemToCart(Integer cartId,CartItem cartItem); 

@@ -8,13 +8,15 @@ import id.ac.ui.cs.advprog.functionality.model.Cart;
 import id.ac.ui.cs.advprog.functionality.model.CartItem;
 
 import id.ac.ui.cs.advprog.functionality.repository.CartRepository;
+import org.springframework.stereotype.Service;
 
+@Service
 public class CartServiceImpl implements CartService {
     @Autowired
     private CartRepository cartRepository;
 
     public Cart createCart(Integer userId) {
-        if(cartRepository.findById(userId)!=null){
+        if(cartRepository.findById(userId).isEmpty()){
             Cart cart = new Cart();
             cart.setId(userId);
             cartRepository.save(cart);
