@@ -3,13 +3,14 @@ package id.ac.ui.cs.advprog.functionality.controller;
 import id.ac.ui.cs.advprog.functionality.model.Book;
 import id.ac.ui.cs.advprog.functionality.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/book-list")
 public class BookController {
 
@@ -59,5 +60,15 @@ public class BookController {
         List<Book> books = bookService.searchAndSortBooks(keyword, sortBy);
         model.addAttribute("books", books);
         return "BookListPage";
+    }
+
+    @GetMapping("/details/{id}")
+    public ResponseEntity<?> getBookDetails(@PathVariable("id") int id) {
+        Book book = bookService.getBookByIndex(id);
+        if (book != null) {
+            return ResponseEntity.ok(book);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book not found");
+        }
     }
 }
