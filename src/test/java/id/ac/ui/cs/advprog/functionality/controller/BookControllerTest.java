@@ -8,16 +8,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.ui.Model;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
 public class BookControllerTest {
@@ -28,11 +29,9 @@ public class BookControllerTest {
     @Mock
     private BookService bookService;
 
-    @Mock
-    private Model model;
-
     private MockMvc mockMvc;
     private List<Book> books;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     public void setUp() {
@@ -45,11 +44,10 @@ public class BookControllerTest {
     public void testGetBookListPage() throws Exception {
         when(bookService.findAllBooks()).thenReturn(books);
         
-        mockMvc.perform(MockMvcRequestBuilders.get("/book-list"))
-               .andExpect(MockMvcResultMatchers.status().isOk())
-               .andExpect(MockMvcResultMatchers.model().attributeExists("books"))
-               .andExpect(MockMvcResultMatchers.model().attribute("books", books))
-               .andExpect(MockMvcResultMatchers.view().name("BookListPage"));
+        mockMvc.perform(get("/book-list"))
+               .andExpect(status().isOk())
+               .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+               .andExpect(content().json(objectMapper.writeValueAsString(books)));
 
         verify(bookService).findAllBooks();
     }
@@ -58,12 +56,11 @@ public class BookControllerTest {
     public void testSearchBooks() throws Exception {
         when(bookService.searchBooks("Test")).thenReturn(books);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/book-list/search")
-                                              .param("keyword", "Test"))
-               .andExpect(MockMvcResultMatchers.status().isOk())
-               .andExpect(MockMvcResultMatchers.model().attributeExists("books"))
-               .andExpect(MockMvcResultMatchers.model().attribute("books", books))
-               .andExpect(MockMvcResultMatchers.view().name("BookListPage"));
+        mockMvc.perform(get("/book-list/search")
+                        .param("keyword", "Test"))
+               .andExpect(status().isOk())
+               .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+               .andExpect(content().json(objectMapper.writeValueAsString(books)));
 
         verify(bookService).searchBooks("Test");
     }
@@ -72,12 +69,11 @@ public class BookControllerTest {
     public void testSortBooks() throws Exception {
         when(bookService.findBooksByNewest()).thenReturn(books);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/book-list/sort")
-                                              .param("criteria", "newest"))
-               .andExpect(MockMvcResultMatchers.status().isOk())
-               .andExpect(MockMvcResultMatchers.model().attributeExists("books"))
-               .andExpect(MockMvcResultMatchers.model().attribute("books", books))
-               .andExpect(MockMvcResultMatchers.view().name("BookListPage"));
+        mockMvc.perform(get("/book-list/sort")
+                        .param("criteria", "newest"))
+               .andExpect(status().isOk())
+               .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+               .andExpect(content().json(objectMapper.writeValueAsString(books)));
 
         verify(bookService).findBooksByNewest();
     }
@@ -86,13 +82,12 @@ public class BookControllerTest {
     public void testSearchAndSortBooks() throws Exception {
         when(bookService.searchAndSortBooks("Test", "popularity")).thenReturn(books);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/book-list/search-sort")
-                                              .param("keyword", "Test")
-                                              .param("sortBy", "popularity"))
-               .andExpect(MockMvcResultMatchers.status().isOk())
-               .andExpect(MockMvcResultMatchers.model().attributeExists("books"))
-               .andExpect(MockMvcResultMatchers.model().attribute("books", books))
-               .andExpect(MockMvcResultMatchers.view().name("BookListPage"));
+        mockMvc.perform(get("/book-list/search-sort")
+                        .param("keyword", "Test")
+                        .param("sortBy", "popularity"))
+               .andExpect(status().isOk())
+               .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+               .andExpect(content().json(objectMapper.writeValueAsString(books)));
 
         verify(bookService).searchAndSortBooks("Test", "popularity");
     }
