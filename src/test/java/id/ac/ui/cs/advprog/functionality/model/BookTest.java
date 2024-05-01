@@ -14,14 +14,14 @@ public class BookTest {
     @BeforeEach
     public void setUp(){
 
-        this.book1 = new Book("abcd", "Steins Gate", "Taka Himeno", "Nitroplus", 50000, "Tentang ilmuwan yang menciptakan mesin waktu", 10,
+        this.book1 = new Book(12, "Steins Gate", "Taka Himeno", "Nitroplus", 50000, "Tentang ilmuwan yang menciptakan mesin waktu", 10,
                 "15-10-2009", "111-111-1111-11-1", 250, "https://m.media-amazon.com/images/M/MV5BMjUxMzE4ZDctODNjMS00MzIwLThjNDktODkwYjc5YWU0MDc0XkEyXkFqcGdeQXVyNjc3OTE4Nzk@._V1_FMjpg_UX1000_.jpg",
                 "Science Fiction", 0);
     }
 
     @Test
     void testGetDetailsBook(){
-        assertEquals("abcd", book1.getId());
+        assertEquals(12, book1.getId());
         assertEquals("Steins Gate", book1.getTitle());
         assertEquals("Taka Himeno", book1.getAuthor());
         assertEquals("Nitroplus", book1.getPublisher());
