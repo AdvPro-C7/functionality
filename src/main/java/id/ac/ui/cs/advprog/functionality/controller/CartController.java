@@ -8,6 +8,8 @@ import id.ac.ui.cs.advprog.functionality.model.Cart;
 import id.ac.ui.cs.advprog.functionality.model.CartItem;
 import id.ac.ui.cs.advprog.functionality.service.CartService;
 
+import java.util.NoSuchElementException;
+
 @RestController
 @RequestMapping("/cart")
 public class CartController {
@@ -19,52 +21,60 @@ public class CartController {
         this.cartService = cartService;
     }
 
-    @PostMapping("/addItem")
-    public ResponseEntity<Cart> addItemToCart(@RequestParam Integer cartId, @RequestBody CartItem cartItem) {
-        Cart cart = cartService.addItemToCart(cartId, cartItem);
-        if (cart != null) {
+    @PostMapping("/addItem/{cartId}")
+    public ResponseEntity<Cart> addItemToCart(@PathVariable Integer cartId, @RequestBody CartItem cartItem) {
+        try {
+            Cart cart = cartService.addItemToCart(cartId, cartItem);
             return ResponseEntity.ok(cart);
-        } else {
+        } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    @PostMapping("/deleteItem")
-    public ResponseEntity<Boolean> deleteItemFromCart(@RequestParam Integer cartId, @RequestBody CartItem cartItem) {
-        boolean deleted = cartService.deleteItemFromCart(cartId, cartItem);
-        if (deleted) {
-            return ResponseEntity.ok(true);
-        } else {
+    @DeleteMapping("/deleteItem/{cartId}")
+    public ResponseEntity<Boolean> deleteItemFromCart(@PathVariable Integer cartId, @RequestBody CartItem cartItem) {
+        try {
+            boolean deleted = cartService.deleteItemFromCart(cartId, cartItem);
+            return ResponseEntity.ok(deleted);
+        } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    @PostMapping("/deleteAllItems")
-    public ResponseEntity<Boolean> deleteAllItemsFromCart(@RequestParam Integer cartId) {
-        boolean deleted = cartService.deleteAllItemsFromCart(cartId);
-        if (deleted) {
-            return ResponseEntity.ok(true);
-        } else {
+    @DeleteMapping("/deleteAllItems/{cartId}")
+    public ResponseEntity<Boolean> deleteAllItemsFromCart(@PathVariable Integer cartId) {
+        try {
+            boolean deleted = cartService.deleteAllItemsFromCart(cartId);
+            return ResponseEntity.ok(deleted);
+        } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    @GetMapping("/findCart")
-    public ResponseEntity<Cart> findCartByUserId(@RequestParam Integer userId) {
-        Cart cart = cartService.findCartByUserId(userId);
-        if (cart != null) {
+    @GetMapping("/findCart/{userId}")
+    public ResponseEntity<Cart> getCartByUserId(@PathVariable Integer userId) {
+        try {
+            Cart cart = cartService.findCartByUserId(userId);
             return ResponseEntity.ok(cart);
-        } else {
+        } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<Cart> createCart(@RequestParam Integer userId) { 
-        Cart cart = cartService.createCart(userId);
-        if (cart != null) {
+    @PostMapping("/create/{userId}")
+    public ResponseEntity<Cart> createCart(@PathVariable Integer userId) {
+        try {
+            Cart cart = cartService.createCart(userId);
             return ResponseEntity.ok(cart);
-        } else {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
