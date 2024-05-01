@@ -4,8 +4,8 @@ import id.ac.ui.cs.advprog.functionality.model.Book;
 import id.ac.ui.cs.advprog.functionality.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,22 +17,20 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
-    @GetMapping("")
-    public String getBookListPage(Model model) {
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Book>> getBookList() {
         List<Book> books = bookService.findAllBooks();
-        model.addAttribute("books", books);
-        return "BookListPage";
+        return ResponseEntity.ok(books);
     }
 
-    @GetMapping("/search")
-    public String searchBooks(@RequestParam("keyword") String keyword, Model model) {
+    @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Book>> searchBooks(@RequestParam("keyword") String keyword) {
         List<Book> books = bookService.searchBooks(keyword);
-        model.addAttribute("books", books);
-        return "BookListPage";
+        return ResponseEntity.ok(books);
     }
 
-    @GetMapping("/sort")
-    public String sortBooks(@RequestParam("criteria") String criteria, Model model) {
+    @GetMapping(value = "/sort", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Book>> sortBooks(@RequestParam("criteria") String criteria) {
         List<Book> books;
         switch (criteria) {
             case "newest":
@@ -49,20 +47,17 @@ public class BookController {
                 break;
             default:
                 books = bookService.findAllBooks();
-                break;
+            }
+            return ResponseEntity.ok(books);
         }
-        model.addAttribute("books", books);
-        return "BookListPage";
-    }
 
-    @GetMapping("/search-sort")
-    public String searchAndSortBooks(@RequestParam("keyword") String keyword, @RequestParam("sortBy") String sortBy, Model model) {
+    @GetMapping(value = "/search-sort", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Book>> searchAndSortBooks(@RequestParam("keyword") String keyword, @RequestParam("sortBy") String sortBy) {
         List<Book> books = bookService.searchAndSortBooks(keyword, sortBy);
-        model.addAttribute("books", books);
-        return "BookListPage";
+        return ResponseEntity.ok(books);
     }
-
-    @GetMapping("/details/{id}")
+    
+    @GetMapping(value = "/details/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getBookDetails(@PathVariable("id") int id) {
         Book book = bookService.getBookByIndex(id);
         if (book != null) {
@@ -71,4 +66,5 @@ public class BookController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book not found");
         }
     }
-}
+} 
+       
