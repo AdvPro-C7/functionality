@@ -15,5 +15,6 @@ public class BookDetailsServiceImpl implements BookDetailsService{
 
     @Override
     public Optional<Book> findById(int id) {
+        return bookDetailsRepository.findById(id);
     }
 }
