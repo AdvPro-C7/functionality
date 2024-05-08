@@ -1,6 +1,7 @@
 package id.ac.ui.cs.advprog.functionality.model;
 
 
+import id.ac.ui.cs.advprog.functionality.dto.CartItemsDto;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.OnDelete;
@@ -27,7 +28,18 @@ public class CartItems {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    @OneToOne(fetch= FetchType.LAZY)
+    @ManyToOne(fetch= FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
+
+    public CartItemsDto getCartDto(){
+        CartItemsDto cartItemsDto = new CartItemsDto();
+        cartItemsDto.setId(id);
+        cartItemsDto.setPrice(price);
+        cartItemsDto.setQuantity(quantity);
+        cartItemsDto.setUserId(user.getId());
+        cartItemsDto.setBookName(book.getTitle());
+        cartItemsDto.setReturnedImg(book.getCoverPicture());
+        return cartItemsDto;
+    }
 }
