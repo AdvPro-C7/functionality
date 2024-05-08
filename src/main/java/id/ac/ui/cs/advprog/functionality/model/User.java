@@ -30,6 +30,9 @@ public class User {
 
     }
     public User(String nama, String email, String noTelp, String password) {
-
+        this.nama = nama;
+        this.email = email;
+        this.noTelp = noTelp;
+        this.password = password;
     }
 }
