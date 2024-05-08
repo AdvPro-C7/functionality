@@ -9,5 +9,6 @@ import java.util.List;
 @Repository
 public interface UserSearchByNameRepository extends JpaRepository<User, String> {
 
+    List<User> findByNamaStartingWith(String name);
 }
 
