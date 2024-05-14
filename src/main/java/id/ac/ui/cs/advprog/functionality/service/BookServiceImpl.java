@@ -1,11 +1,14 @@
 package id.ac.ui.cs.advprog.functionality.service;
 
+import id.ac.ui.cs.advprog.functionality.enums.BookSortCriteria;
 import id.ac.ui.cs.advprog.functionality.model.Book;
 import id.ac.ui.cs.advprog.functionality.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookServiceImpl implements BookService {
@@ -14,51 +17,46 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> findAllBooks() {
-        return bookRepository.getBooks();
+        return bookRepository.findAll();
     }
 
     @Override
     public List<Book> searchBooks(String keyword) {
-        return bookRepository.searchBooks(keyword);
+        return bookRepository.findByKeyword(keyword);
     }
 
     @Override
     public List<Book> findBooksByNewest() {
-        return bookRepository.sortBooksByNewest();
+        return bookRepository.findAll(Sort.by(Sort.Direction.DESC, "publishDate"));
     }
 
     @Override
     public List<Book> findBooksByPopularity() {
-        return bookRepository.sortBooksByPopularity();
+        return bookRepository.findAll(Sort.by(Sort.Direction.DESC, "sold"));
     }
 
     @Override
     public List<Book> findBooksByPriceAsc() {
-        return bookRepository.sortBooksByPriceAsc();
+        return bookRepository.findAll(Sort.by(Sort.Direction.ASC, "price"));
     }
 
     @Override
     public List<Book> findBooksByPriceDesc() {
-        return bookRepository.sortBooksByPriceDesc();
+        return bookRepository.findAll(Sort.by(Sort.Direction.DESC, "price"));
     }
 
     @Override
-    public List<Book> searchAndSortBooks(String keyword, String sortBy) {
-        return bookRepository.searchAndSortBooks(keyword, sortBy);
+    public List<Book> searchAndSortBooks(String keyword, BookSortCriteria sortBy) {
+        return bookRepository.searchAndSortBooks(keyword, sortBy.getSortKey());
     }
 
     @Override
-    public Book getBookByIndex(int index) {
-        return bookRepository.getBookByIdx(index);
+    public Optional<Book> getBookById(int id) {
+        return bookRepository.findById(id);
     }
 
     @Override
     public boolean isRepositoryEmpty() {
-        return bookRepository.isEmpty();
-    }
-
-    @Override
-    public String getEmptyRepositoryMessage() {
-        return bookRepository.getEmptyMessage();
+        return bookRepository.count() == 0;
     }
 }
