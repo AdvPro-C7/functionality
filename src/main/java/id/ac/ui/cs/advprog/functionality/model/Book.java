@@ -16,7 +16,7 @@ public class Book {
     @Id
     @GeneratedValue (strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
-    int id;
+    Long id;
 
     @Column(name = "title", updatable = false, nullable = false)
     @Setter(AccessLevel.NONE)
@@ -60,7 +60,7 @@ public class Book {
 
     }
 
-    public Book(int id, String title, String author, String publisher, Long price, String description,
+    public Book(Long id, String title, String author, String publisher, Long price, String description,
                 int stock, String publishDate, String isbn, int pages, String coverPicture, String category, int sold){
         this.id = id;
         this.title = title;

@@ -16,10 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,6 +34,7 @@ public class CartServiceImpl implements CartService {
     private UserRepository userRepository;
 
     public ResponseEntity<?> addBookToCart(AddBookCartDto addBookCartDto) {
+        System.out.println(OrderStatus.PENDING);
         Order activeOrder = orderRepository.findByUserIdAndStatus(addBookCartDto.getUserId(), OrderStatus.PENDING);
         Optional<CartItems> optionalCartItems = cartItemRepository.findByBookIdAndOrderIdAndUserId(
                 addBookCartDto.getBookId(),activeOrder.getId(),addBookCartDto.getUserId()
@@ -77,6 +75,7 @@ public class CartServiceImpl implements CartService {
             newOrder.setStatus(OrderStatus.PENDING);
             newOrder.setTotalPrice(0L);
             newOrder.setUser(optionalUser.get());
+            newOrder.setCartItems(new ArrayList<>());
             Order savedOrder = orderRepository.save(newOrder);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedOrder);
         } else {
@@ -155,7 +154,8 @@ public class CartServiceImpl implements CartService {
         Order activeOrder = orderRepository.findByUserIdAndStatus(placeOrderDto.getUserId(), OrderStatus.PENDING);
         Optional<User> optionalUser = userRepository.findById(placeOrderDto.getUserId());
 
-        if(optionalUser.isPresent()){
+
+        if (optionalUser.isPresent() && activeOrder != null) {
             activeOrder.setShippingAddress(placeOrderDto.getAddress());
             activeOrder.setOrderDate(new Date());
             activeOrder.setStatus(OrderStatus.WAITING_PAYMENT);
