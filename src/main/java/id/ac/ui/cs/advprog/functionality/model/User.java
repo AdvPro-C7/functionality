@@ -1,8 +1,12 @@
 package id.ac.ui.cs.advprog.functionality.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 
 @Getter
 @Entity
@@ -34,5 +38,6 @@ public class User {
         this.email = email;
         this.noTelp = noTelp;
         this.password = password;
+        this.role = "pelanggan";
     }
 }
