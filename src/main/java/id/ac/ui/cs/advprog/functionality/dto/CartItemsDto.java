@@ -18,5 +18,4 @@ public class CartItemsDto {
     private String returnedImg;
 
     private Long userId;
-
 }
