@@ -9,9 +9,12 @@ import java.util.stream.Stream;
 import org.springframework.stereotype.Repository;
 
 import id.ac.ui.cs.advprog.functionality.model.Book;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 @Repository
-public class BookRepository {
+public interface BookRepository extends JpaRepository<Book, Long> {
+
+}
     private List<Book> books =  new ArrayList<>();
 
     public BookRepository() {
@@ -127,3 +130,4 @@ public class BookRepository {
         return "No books available";
     }
 }
+
