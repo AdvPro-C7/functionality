@@ -24,7 +24,7 @@ configurations {
 subprojects {
     sonar {
         properties {
-            property "sonar.sources", "src"
+            property("sonar.sources", "src")
         }
     }
 }
