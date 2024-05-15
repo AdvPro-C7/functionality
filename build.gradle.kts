@@ -22,7 +22,7 @@ configurations {
 }
 
 subprojects {
-    sonar {
+    sonarqube {
         properties {
             property("sonar.sources=", "src")
         }
