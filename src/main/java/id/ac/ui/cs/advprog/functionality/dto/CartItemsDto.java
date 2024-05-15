@@ -5,11 +5,11 @@ import lombok.Data;
 public class CartItemsDto {
     private Long id;
 
-    private Long price;
+    private double price;
 
     private Long quantity;
 
-    private Long bookId;
+    private int bookId;
 
     private Long orderId;
 

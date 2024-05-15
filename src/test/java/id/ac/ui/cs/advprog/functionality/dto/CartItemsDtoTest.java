@@ -9,9 +9,9 @@ public class CartItemsDtoTest {
     public void testCartItemsDto() {
         // Create sample data
         Long id = 1L;
-        Long price = 100L;
+        double price = 100.0;
         Long quantity = 2L;
-        Long bookId = 10L;
+        int bookId = 10;
         Long orderId = 20L;
         String bookName = "Sample Book";
         String returnedImg = "sample_image.jpg";
@@ -39,9 +39,9 @@ public class CartItemsDtoTest {
 
         // Test setters
         Long newId = 2L;
-        Long newPrice = 200L;
+        double newPrice = 200.0;
         Long newQuantity = 3L;
-        Long newBookId = 20L;
+        int newBookId = 20;
         Long newOrderId = 30L;
         String newBookName = "New Sample Book";
         String newReturnedImg = "new_sample_image.jpg";

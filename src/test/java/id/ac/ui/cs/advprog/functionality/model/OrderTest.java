@@ -33,14 +33,14 @@ public class OrderTest {
 
         when(user.getNama()).thenReturn("Test User");
         when(cartItem.getId()).thenReturn(1L);
-        when(cartItem.getPrice()).thenReturn(100L);
+        when(cartItem.getPrice()).thenReturn(100.0);
         when(cartItem.getQuantity()).thenReturn(2L);
         when(cartItem.getBook()).thenReturn(book);
         when(cartItem.getUser()).thenReturn(user);
         order = new Order();
         when(cartItem.getOrder()).thenReturn(order);
         when(cartItem.getOrder()).thenReturn(order);
-        when(book.getId()).thenReturn(1L);
+        when(book.getId()).thenReturn(1);
         when(book.getTitle()).thenReturn("Test Book");
         when(book.getCoverPicture()).thenReturn("Test Image");
 

@@ -15,7 +15,7 @@ public class OrderDto {
 
     private Long id;
 
-    private Long totalPrice;
+    private double totalPrice;
 
     private String shippingAddress;
 

@@ -11,7 +11,7 @@ public class CartItemsTest {
     Book book;
     @BeforeEach
     public void setUp() {
-        this.book = new Book(12L, "Steins Gate", "Taka Himeno", "Nitroplus", 50000L, "Tentang ilmuwan yang menciptakan mesin waktu", 10,
+        this.book = new Book(12, "Steins Gate", "Taka Himeno", "Nitroplus", 50000L, "Tentang ilmuwan yang menciptakan mesin waktu", 10,
                 "15-10-2009", "111-111-1111-11-1", 250, "https://m.media-amazon.com/images/M/MV5BMjUxMzE4ZDctODNjMS00MzIwLThjNDktODkwYjc5YWU0MDc0XkEyXkFqcGdeQXVyNjc3OTE4Nzk@._V1_FMjpg_UX1000_.jpg",
                 "Science Fiction", 0);
     }
@@ -20,7 +20,7 @@ public class CartItemsTest {
     @Test
     public void testGettersAndSetters() {
         Long id = 1L;
-        Long price = 100L;
+        double price = 100.0;
         Long quantity = 2L;
 
         User user = new User();
@@ -44,7 +44,7 @@ public class CartItemsTest {
     @Test
     public void testGetCartDto() {
         Long id = 1L;
-        Long price = 100L;
+        double price = 100.0;
         Long quantity = 2L;
 
         User user = new User();

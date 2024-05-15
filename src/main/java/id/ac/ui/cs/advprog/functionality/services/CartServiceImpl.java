@@ -34,7 +34,6 @@ public class CartServiceImpl implements CartService {
     private UserRepository userRepository;
 
     public ResponseEntity<?> addBookToCart(AddBookCartDto addBookCartDto) {
-        System.out.println(OrderStatus.PENDING);
         Order activeOrder = orderRepository.findByUserIdAndStatus(addBookCartDto.getUserId(), OrderStatus.PENDING);
         Optional<CartItems> optionalCartItems = cartItemRepository.findByBookIdAndOrderIdAndUserId(
                 addBookCartDto.getBookId(),activeOrder.getId(),addBookCartDto.getUserId()
@@ -53,7 +52,7 @@ public class CartServiceImpl implements CartService {
                 cart.setUser(optionalUser.get());
                 cart.setOrder(activeOrder);
 
-                CartItems updatedCart = cartItemRepository.save(cart);
+                cartItemRepository.save(cart);
 
                 activeOrder.setTotalPrice(activeOrder.getTotalPrice()+cart.getPrice());
                 activeOrder.getCartItems().add(cart);

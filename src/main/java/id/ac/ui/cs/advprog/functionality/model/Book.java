@@ -1,9 +1,7 @@
 package id.ac.ui.cs.advprog.functionality.model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 
@@ -13,24 +11,23 @@ import lombok.Setter;
 })
 
 public class Book {
+
     @Id
     @GeneratedValue (strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
-    Long id;
+    int id;
 
     @Column(name = "title", updatable = false, nullable = false)
-    @Setter(AccessLevel.NONE)
     String title;
 
     @Column(name = "author", updatable = false, nullable = false)
-    @Setter(AccessLevel.NONE)
     String author;
 
     @Column(name = "publisher", nullable = false)
     String publisher;
 
     @Column(name = "price")
-    Long price;
+    double price;
 
     @Column(name = "description", nullable = false)
     String description;
@@ -60,7 +57,7 @@ public class Book {
 
     }
 
-    public Book(Long id, String title, String author, String publisher, Long price, String description,
+    public Book(int id, String title, String author, String publisher, double price, String description,
                 int stock, String publishDate, String isbn, int pages, String coverPicture, String category, int sold){
         this.id = id;
         this.title = title;
@@ -76,21 +73,4 @@ public class Book {
         this.category = category;
         this.sold = sold;
     }
-
-    public void setSold(int sold) {
-        if (sold < 0) {
-            throw new IllegalArgumentException();
-        } else {
-            this.sold = sold;
-        }
-    }
-
-    public void setStock(int stock){
-        if (stock <= 0){
-            throw new IllegalArgumentException();
-        } else {
-            this.stock = stock;
-        }
-    }
-
 }

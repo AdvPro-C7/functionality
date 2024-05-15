@@ -15,7 +15,7 @@ public class OrderDtoTest {
     public void testOrderDto() {
         // Create sample data
         Long id = 1L;
-        Long totalPrice = 1000L;
+        double totalPrice = 1000.0;
         String shippingAddress = "123 Main St, City";
         OrderStatus status = OrderStatus.PENDING;
         String username = "john_doe";
@@ -51,7 +51,7 @@ public class OrderDtoTest {
 
         // Test setters
         Long newId = 2L;
-        Long newTotalPrice = 2000L;
+        double newTotalPrice = 2000.0;
         String newShippingAddress = "456 Elm St, City";
         OrderStatus newStatus = OrderStatus.WAITING_PAYMENT;
         String newUsername = "jane_doe";
