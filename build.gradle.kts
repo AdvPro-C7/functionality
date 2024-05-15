@@ -21,14 +21,6 @@ configurations {
 	}
 }
 
-subprojects {
-    sonarqube {
-        properties {
-            property("sonar.sources=", "src")
-        }
-    }
-}
-
 repositories {
 	mavenCentral()
 }
