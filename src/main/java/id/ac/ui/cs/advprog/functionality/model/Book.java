@@ -30,7 +30,7 @@ public class Book {
     String publisher;
 
     @Column(name = "price")
-    Long price;
+    double price;
 
     @Column(name = "description", nullable = false)
     String description;
@@ -60,7 +60,7 @@ public class Book {
 
     }
 
-    public Book(int id, String title, String author, String publisher, Long price, String description,
+    public Book(int id, String title, String author, String publisher, double price, String description,
                 int stock, String publishDate, String isbn, int pages, String coverPicture, String category, int sold){
         this.id = id;
         this.title = title;
@@ -92,6 +92,5 @@ public class Book {
             this.stock = stock;
         }
     }
-
 
 }

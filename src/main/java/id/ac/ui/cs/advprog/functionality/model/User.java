@@ -38,6 +38,5 @@ public class User {
         this.email = email;
         this.noTelp = noTelp;
         this.password = password;
-        this.role = "pelanggan";
     }
 }
