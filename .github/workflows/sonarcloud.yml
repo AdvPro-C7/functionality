@@ -35,6 +35,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
             args:
+                -sonar.sources=.
                 -Dsonar.projectKey=AdvPro-C7_functionality
                 -Dsonar.organization=advpro-c7
                 -Dsonar.java.binaries=.
