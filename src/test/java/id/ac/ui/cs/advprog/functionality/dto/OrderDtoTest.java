@@ -21,18 +21,16 @@ public class OrderDtoTest {
         String username = "john_doe";
         Date orderDate = new Date();
 
-        // Create a CartItemsDto object
         CartItemsDto cartItemsDto1 = new CartItemsDto();
         cartItemsDto1.setId(1L);
-        // Add more properties as needed
 
         CartItemsDto cartItemsDto2 = new CartItemsDto();
         cartItemsDto2.setId(2L);
-        // Add more properties as needed
+
 
         List<CartItemsDto> cartItems = Arrays.asList(cartItemsDto1, cartItemsDto2);
 
-        // Create an OrderDto object
+
         OrderDto orderDto = new OrderDto();
         orderDto.setId(id);
         orderDto.setTotalPrice(totalPrice);
@@ -66,7 +64,7 @@ public class OrderDtoTest {
         orderDto.setUsername(newUsername);
         orderDto.setOrderDate(newOrderDate);
 
-        // Verify that setters worked correctly
+
         assertEquals(newId, orderDto.getId());
         assertEquals(newTotalPrice, orderDto.getTotalPrice());
         assertEquals(newShippingAddress, orderDto.getShippingAddress());

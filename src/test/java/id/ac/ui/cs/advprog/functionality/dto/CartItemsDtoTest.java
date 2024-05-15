@@ -17,7 +17,6 @@ public class CartItemsDtoTest {
         String returnedImg = "sample_image.jpg";
         Long userId = 30L;
 
-        // Create a CartItemsDto object
         CartItemsDto cartItemsDto = new CartItemsDto();
         cartItemsDto.setId(id);
         cartItemsDto.setPrice(price);
@@ -57,7 +56,6 @@ public class CartItemsDtoTest {
         cartItemsDto.setReturnedImg(newReturnedImg);
         cartItemsDto.setUserId(newUserId);
 
-        // Verify that setters worked correctly
         assertEquals(newId, cartItemsDto.getId());
         assertEquals(newPrice, cartItemsDto.getPrice());
         assertEquals(newQuantity, cartItemsDto.getQuantity());
