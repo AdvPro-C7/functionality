@@ -21,6 +21,14 @@ configurations {
 	}
 }
 
+subprojects {
+    sonar {
+        properties {
+            property "sonar.sources", "src"
+        }
+    }
+}
+
 repositories {
 	mavenCentral()
 }
