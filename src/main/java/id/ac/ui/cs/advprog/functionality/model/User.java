@@ -1,10 +1,12 @@
 package id.ac.ui.cs.advprog.functionality.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
+
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 @Entity
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"email", "no_telp"})
