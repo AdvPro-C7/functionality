@@ -102,6 +102,7 @@ public class AddBookCartDtoTest {
         assertThat(dto.hashCode()).isEqualTo(initialHashCode);
     }
 
+    // Additional tests to cover more conditions
     @Test
     public void testSetUserIdToNull() {
         AddBookCartDto dto = new AddBookCartDto();
@@ -137,6 +138,7 @@ public class AddBookCartDtoTest {
         assertNotEquals(initialHashCode, updatedHashCode);
     }
 
+    // New tests to cover more conditions
     @Test
     public void testEqualsWithSameValues() {
         AddBookCartDto dto1 = new AddBookCartDto();
@@ -183,5 +185,64 @@ public class AddBookCartDtoTest {
         dto2.setBookId(100);
 
         assertThat(dto1).isNotEqualTo(dto2);
+    }
+
+    @Test
+    public void testNegativeBookId() {
+        AddBookCartDto dto = new AddBookCartDto();
+        dto.setUserId(1L);
+        dto.setBookId(-1);
+
+        assertEquals(1L, dto.getUserId());
+        assertEquals(-1, dto.getBookId());
+    }
+
+    @Test
+    public void testZeroBookId() {
+        AddBookCartDto dto = new AddBookCartDto();
+        dto.setUserId(1L);
+        dto.setBookId(0);
+
+        assertEquals(1L, dto.getUserId());
+        assertEquals(0, dto.getBookId());
+    }
+
+    @Test
+    public void testNotEqualsDifferentBookId() {
+        AddBookCartDto dto1 = new AddBookCartDto();
+        dto1.setUserId(1L);
+        dto1.setBookId(100);
+
+        AddBookCartDto dto2 = new AddBookCartDto();
+        dto2.setUserId(1L);
+        dto2.setBookId(101);
+
+        assertThat(dto1).isNotEqualTo(dto2);
+    }
+
+    @Test
+    public void testEqualsSameUserIdDifferentBookId() {
+        AddBookCartDto dto1 = new AddBookCartDto();
+        dto1.setUserId(1L);
+        dto1.setBookId(100);
+
+        AddBookCartDto dto2 = new AddBookCartDto();
+        dto2.setUserId(1L);
+        dto2.setBookId(101);
+
+        assertNotEquals(dto1, dto2);
+    }
+
+    @Test
+    public void testEqualsSameBookIdDifferentUserId() {
+        AddBookCartDto dto1 = new AddBookCartDto();
+        dto1.setUserId(1L);
+        dto1.setBookId(100);
+
+        AddBookCartDto dto2 = new AddBookCartDto();
+        dto2.setUserId(2L);
+        dto2.setBookId(100);
+
+        assertNotEquals(dto1, dto2);
     }
 }
