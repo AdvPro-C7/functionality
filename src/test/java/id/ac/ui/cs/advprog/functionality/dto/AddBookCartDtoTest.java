@@ -111,4 +111,16 @@ public class AddBookCartDtoTest {
 
         assertNotEquals(dto, otherClassObject);
     }
+    @Test
+    public void testEqualsWithOneNullUserId() {
+        AddBookCartDto dto1 = new AddBookCartDto();
+        dto1.setUserId(null);
+        dto1.setBookId(100);
+
+        AddBookCartDto dto2 = new AddBookCartDto();
+        dto2.setUserId(1L);
+        dto2.setBookId(100);
+
+        assertNotEquals(dto1, dto2);
+    }
 }
