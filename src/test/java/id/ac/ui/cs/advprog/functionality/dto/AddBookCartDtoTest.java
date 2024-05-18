@@ -3,7 +3,7 @@ package id.ac.ui.cs.advprog.functionality.dto;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AddBookCartDtoTest {
 
@@ -19,6 +19,7 @@ public class AddBookCartDtoTest {
         assertEquals(userId, addBookCartDto.getUserId());
         assertEquals(bookId, addBookCartDto.getBookId());
     }
+
     @Test
     public void testGetterSetter() {
         AddBookCartDto dto = new AddBookCartDto();
@@ -28,6 +29,7 @@ public class AddBookCartDtoTest {
         assertThat(dto.getUserId()).isEqualTo(1L);
         assertThat(dto.getBookId()).isEqualTo(100);
     }
+
     @Test
     public void testToString() {
         AddBookCartDto dto = new AddBookCartDto();
@@ -38,6 +40,7 @@ public class AddBookCartDtoTest {
         assertThat(toString).contains("userId=1");
         assertThat(toString).contains("bookId=100");
     }
+
     @Test
     public void testEqualsAndHashCode() {
         AddBookCartDto dto1 = new AddBookCartDto();
@@ -58,6 +61,7 @@ public class AddBookCartDtoTest {
         assertThat(dto1.hashCode()).isEqualTo(dto2.hashCode());
         assertThat(dto1.hashCode()).isNotEqualTo(dto3.hashCode());
     }
+
     @Test
     public void testNotEqualsDifferentUserId() {
         AddBookCartDto dto1 = new AddBookCartDto();
@@ -122,5 +126,61 @@ public class AddBookCartDtoTest {
         int initialHashCode = dto.hashCode();
 
         assertThat(dto.hashCode()).isEqualTo(initialHashCode);
+    }
+
+    // Additional tests to cover remaining conditions
+    @Test
+    public void testSetUserIdToNull() {
+        AddBookCartDto dto = new AddBookCartDto();
+        dto.setUserId(null);
+        dto.setBookId(100);
+
+        assertNull(dto.getUserId());
+        assertEquals(100, dto.getBookId());
+    }
+
+    @Test
+    public void testSetBookIdToZero() {
+        AddBookCartDto dto = new AddBookCartDto();
+        dto.setUserId(1L);
+        dto.setBookId(0);
+
+        assertEquals(1L, dto.getUserId());
+        assertEquals(0, dto.getBookId());
+    }
+
+    @Test
+    public void testSetBookIdToNegative() {
+        AddBookCartDto dto = new AddBookCartDto();
+        dto.setUserId(1L);
+        dto.setBookId(-1);
+
+        assertEquals(1L, dto.getUserId());
+        assertEquals(-1, dto.getBookId());
+    }
+
+    @Test
+    public void testToStringWithNullValues() {
+        AddBookCartDto dto = new AddBookCartDto();
+        dto.setUserId(null);
+        dto.setBookId(100);
+
+        String toString = dto.toString();
+        assertThat(toString).contains("userId=null");
+        assertThat(toString).contains("bookId=100");
+    }
+
+    @Test
+    public void testHashCodeAfterStateChange() {
+        AddBookCartDto dto = new AddBookCartDto();
+        dto.setUserId(1L);
+        dto.setBookId(100);
+
+        int initialHashCode = dto.hashCode();
+
+        dto.setUserId(2L);
+        int updatedHashCode = dto.hashCode();
+
+        assertNotEquals(initialHashCode, updatedHashCode);
     }
 }

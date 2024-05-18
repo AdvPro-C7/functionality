@@ -24,13 +24,13 @@ public class CartController {
         return cartService.addBookToCart(addBookCartDto);
     }
 
-    @PostMapping("/createCart/{userId}")
-    public ResponseEntity<?> createCart(@PathVariable Long userId) {
+    @PostMapping("/createCart")
+    public ResponseEntity<?> createCart(@RequestBody Long userId) {
         return cartService.createCart(userId);
     }
 
-    @GetMapping("/cart/{userId}")
-    public ResponseEntity<?> getCartByUserId(@PathVariable Long userId) {
+    @GetMapping("/cart")
+    public ResponseEntity<?> getCartByUserId(@RequestBody Long userId) {
         OrderDto orderDto = cartService.getCartByUserId(userId);
         return ResponseEntity.status(HttpStatus.OK).body(orderDto);
     }
@@ -68,14 +68,14 @@ public class CartController {
     }
 
 
-    @GetMapping("/orders/waiting-shipping/{userId}")
-    public ResponseEntity<List<OrderDto>> getOrdersWaitingShipping(@PathVariable Long userId) {
+    @GetMapping("/orders/waiting-shipping")
+    public ResponseEntity<List<OrderDto>> getOrdersWaitingShipping(@RequestBody  Long userId) {
         List<OrderDto> orders = cartService.getOrdersWaitingShipping(userId);
         return ResponseEntity.ok(orders);
     }
 
-    @GetMapping("/orders/waiting-payment/{userId}")
-    public ResponseEntity<List<OrderDto>> getOrdersWaitingPayment(@PathVariable Long userId) {
+    @GetMapping("/orders/waiting-payment")
+    public ResponseEntity<List<OrderDto>> getOrdersWaitingPayment(@RequestBody  Long userId) {
         List<OrderDto> orders = cartService.getOrdersWaitingPayment(userId);
         return ResponseEntity.ok(orders);
     }
