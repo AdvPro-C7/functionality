@@ -14,7 +14,7 @@ import lombok.Setter;
 
 public class Book {
     @Id
-    @GeneratedValue (strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
     int id;
 
@@ -56,12 +56,12 @@ public class Book {
     @Column(name = "sold", nullable = false)
     int sold;
 
-    public Book(){
+    public Book() {
 
     }
 
     public Book(int id, String title, String author, String publisher, double price, String description,
-                int stock, String publishDate, String isbn, int pages, String coverPicture, String category, int sold){
+                int stock, String publishDate, String isbn, int pages, String coverPicture, String category, int sold) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -85,11 +85,11 @@ public class Book {
         }
     }
 
-    public void setStock(int stock){
-        if (stock <= 0){
+    public void setStock(int stock) {
+        if (stock <= 0) {
             throw new IllegalArgumentException();
         } else {
             this.stock = stock;
         }
     }
-
+}
