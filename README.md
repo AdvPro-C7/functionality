@@ -1,5 +1,9 @@
 # AdvProg - C7 📚
 
+[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/summary/new_code?id=AdvPro-C7_functionality)
+
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=AdvPro-C7_functionality&metric=coverage)](https://sonarcloud.io/summary/new_code?id=AdvPro-C7_functionality) [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=AdvPro-C7_functionality&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=AdvPro-C7_functionality) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=AdvPro-C7_functionality&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=AdvPro-C7_functionality)
+
 ## 👥 Nama Anggota Kelompok C7 👥
 * [Venedict Chen](https://github.com/venedictchen) - 2206024436
 * [Bryan Raihan ‘Ilman](https://github.com/bryan-ilman-2002) - 2106704351
