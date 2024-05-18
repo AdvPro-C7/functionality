@@ -246,16 +246,6 @@ public class AddBookCartDtoTest {
         assertNotEquals(dto1, dto2);
     }
 
-    @Test
-    public void testHashCodeWithDefaultValues() {
-        AddBookCartDto dto = new AddBookCartDto();
-        int initialHashCode = dto.hashCode();
-
-        dto.setUserId(null);
-        dto.setBookId(0);
-
-        assertNotEquals(initialHashCode, dto.hashCode());
-    }
 
     @Test
     public void testEqualsWithDefaultValues() {
