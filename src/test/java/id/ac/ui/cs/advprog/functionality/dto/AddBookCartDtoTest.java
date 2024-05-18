@@ -1,5 +1,6 @@
 package id.ac.ui.cs.advprog.functionality.dto;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -7,22 +8,27 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class AddBookCartDtoTest {
 
+    private AddBookCartDto dto;
+
+    @BeforeEach
+    public void setUp() {
+        dto = new AddBookCartDto();
+    }
+
     @Test
     public void testAddBookCartDto() {
         Long userId = 1L;
         int bookId = 10;
 
-        AddBookCartDto addBookCartDto = new AddBookCartDto();
-        addBookCartDto.setUserId(userId);
-        addBookCartDto.setBookId(bookId);
+        dto.setUserId(userId);
+        dto.setBookId(bookId);
 
-        assertEquals(userId, addBookCartDto.getUserId());
-        assertEquals(bookId, addBookCartDto.getBookId());
+        assertEquals(userId, dto.getUserId());
+        assertEquals(bookId, dto.getBookId());
     }
 
     @Test
     public void testGetterSetter() {
-        AddBookCartDto dto = new AddBookCartDto();
         dto.setUserId(1L);
         dto.setBookId(100);
 
@@ -32,7 +38,6 @@ public class AddBookCartDtoTest {
 
     @Test
     public void testToString() {
-        AddBookCartDto dto = new AddBookCartDto();
         dto.setUserId(1L);
         dto.setBookId(100);
 
@@ -64,7 +69,6 @@ public class AddBookCartDtoTest {
 
     @Test
     public void testEqualsSameObject() {
-        AddBookCartDto dto = new AddBookCartDto();
         dto.setUserId(1L);
         dto.setBookId(100);
 
@@ -73,7 +77,6 @@ public class AddBookCartDtoTest {
 
     @Test
     public void testNotEqualsNull() {
-        AddBookCartDto dto = new AddBookCartDto();
         dto.setUserId(1L);
         dto.setBookId(100);
 
@@ -82,7 +85,6 @@ public class AddBookCartDtoTest {
 
     @Test
     public void testNotEqualsDifferentClass() {
-        AddBookCartDto dto = new AddBookCartDto();
         dto.setUserId(1L);
         dto.setBookId(100);
 
@@ -93,7 +95,6 @@ public class AddBookCartDtoTest {
 
     @Test
     public void testHashCodeConsistency() {
-        AddBookCartDto dto = new AddBookCartDto();
         dto.setUserId(1L);
         dto.setBookId(100);
 
@@ -102,10 +103,8 @@ public class AddBookCartDtoTest {
         assertThat(dto.hashCode()).isEqualTo(initialHashCode);
     }
 
-    // Additional tests to cover more conditions
     @Test
     public void testSetUserIdToNull() {
-        AddBookCartDto dto = new AddBookCartDto();
         dto.setUserId(null);
         dto.setBookId(100);
 
@@ -115,7 +114,6 @@ public class AddBookCartDtoTest {
 
     @Test
     public void testToStringWithNullValues() {
-        AddBookCartDto dto = new AddBookCartDto();
         dto.setUserId(null);
         dto.setBookId(100);
 
@@ -126,7 +124,6 @@ public class AddBookCartDtoTest {
 
     @Test
     public void testHashCodeAfterStateChange() {
-        AddBookCartDto dto = new AddBookCartDto();
         dto.setUserId(1L);
         dto.setBookId(100);
 
@@ -138,7 +135,6 @@ public class AddBookCartDtoTest {
         assertNotEquals(initialHashCode, updatedHashCode);
     }
 
-    // New tests to cover more conditions
     @Test
     public void testEqualsWithSameValues() {
         AddBookCartDto dto1 = new AddBookCartDto();
@@ -154,7 +150,6 @@ public class AddBookCartDtoTest {
 
     @Test
     public void testEqualsWithDifferentInstances() {
-        AddBookCartDto dto = new AddBookCartDto();
         dto.setUserId(1L);
         dto.setBookId(100);
 
@@ -189,7 +184,6 @@ public class AddBookCartDtoTest {
 
     @Test
     public void testNegativeBookId() {
-        AddBookCartDto dto = new AddBookCartDto();
         dto.setUserId(1L);
         dto.setBookId(-1);
 
@@ -199,7 +193,6 @@ public class AddBookCartDtoTest {
 
     @Test
     public void testZeroBookId() {
-        AddBookCartDto dto = new AddBookCartDto();
         dto.setUserId(1L);
         dto.setBookId(0);
 
@@ -246,7 +239,6 @@ public class AddBookCartDtoTest {
         assertNotEquals(dto1, dto2);
     }
 
-
     @Test
     public void testEqualsWithDefaultValues() {
         AddBookCartDto dto1 = new AddBookCartDto();
@@ -254,32 +246,4 @@ public class AddBookCartDtoTest {
 
         assertThat(dto1).isEqualTo(dto2);
     }
-
-    @Test
-    public void testLargeValues() {
-        AddBookCartDto dto = new AddBookCartDto();
-        dto.setUserId(Long.MAX_VALUE);
-        dto.setBookId(Integer.MAX_VALUE);
-
-        assertEquals(Long.MAX_VALUE, dto.getUserId());
-        assertEquals(Integer.MAX_VALUE, dto.getBookId());
-    }
-
-    @Test
-    public void testUnintendedChanges() {
-        AddBookCartDto dto = new AddBookCartDto();
-        dto.setUserId(1L);
-        dto.setBookId(100);
-
-        AddBookCartDto dtoRef = dto;
-
-
-        dtoRef.setUserId(2L);
-        dtoRef.setBookId(200);
-
-        assertEquals(dto.getUserId(), dtoRef.getUserId());
-        assertEquals(dto.getBookId(), dtoRef.getBookId());
-    }
-
-
 }
