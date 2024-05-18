@@ -246,4 +246,31 @@ public class AddBookCartDtoTest {
 
         assertThat(dto1).isEqualTo(dto2);
     }
+
+    // Additional tests for uncovered conditions
+    @Test
+    public void testEqualsWithDifferentUserIdSameBookId() {
+        AddBookCartDto dto1 = new AddBookCartDto();
+        dto1.setUserId(1L);
+        dto1.setBookId(100);
+
+        AddBookCartDto dto2 = new AddBookCartDto();
+        dto2.setUserId(2L);
+        dto2.setBookId(100);
+
+        assertNotEquals(dto1, dto2);
+    }
+
+    @Test
+    public void testEqualsWithSameUserIdDifferentBookId() {
+        AddBookCartDto dto1 = new AddBookCartDto();
+        dto1.setUserId(1L);
+        dto1.setBookId(100);
+
+        AddBookCartDto dto2 = new AddBookCartDto();
+        dto2.setUserId(1L);
+        dto2.setBookId(101);
+
+        assertNotEquals(dto1, dto2);
+    }
 }
