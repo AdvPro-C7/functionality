@@ -254,4 +254,32 @@ public class AddBookCartDtoTest {
 
         assertThat(dto1).isEqualTo(dto2);
     }
+
+    @Test
+    public void testLargeValues() {
+        AddBookCartDto dto = new AddBookCartDto();
+        dto.setUserId(Long.MAX_VALUE);
+        dto.setBookId(Integer.MAX_VALUE);
+
+        assertEquals(Long.MAX_VALUE, dto.getUserId());
+        assertEquals(Integer.MAX_VALUE, dto.getBookId());
+    }
+
+    @Test
+    public void testUnintendedChanges() {
+        AddBookCartDto dto = new AddBookCartDto();
+        dto.setUserId(1L);
+        dto.setBookId(100);
+
+        AddBookCartDto dtoRef = dto;
+
+
+        dtoRef.setUserId(2L);
+        dtoRef.setBookId(200);
+
+        assertEquals(dto.getUserId(), dtoRef.getUserId());
+        assertEquals(dto.getBookId(), dtoRef.getBookId());
+    }
+
+
 }
