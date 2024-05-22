@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -21,20 +21,20 @@ public class BookDetailsController {
     BookDetailsService bookDetailsService;
 
     @RequestMapping(value = "/api/book-details/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> getDetailsBook(@PathVariable int id){
+    public ResponseEntity getDetailsBook(@PathVariable int id) {
         ResponseEntity responseEntity = null;
         try {
-            RestTemplate restTemplate = new RestTemplate();
-            String url = "http://localhost:8080/api/book-details/" + id;
-            ResponseEntity<Book> response = restTemplate.getForEntity(url, Book.class);
-            if(response.getStatusCode().is2xxSuccessful()) {
-                Book book = response.getBody();
-                return ResponseEntity.ok(book);
-            } else {
-                return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
-            }
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            Optional<Book> book = bookDetailsService.findById(id);
+            responseEntity = ResponseEntity.ok(book);
+        } catch (Exception e) {
+            responseEntity = ResponseEntity.badRequest().body(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        return responseEntity;
+    }
+
+    @RequestMapping(value = "/api/best-selling-books", method = RequestMethod.GET)
+    public ResponseEntity<List<Book>> getBestSellingBooks() {
+        List<Book> bestSellingBooks = bookDetailsService.getTopTenBestSellingBooks();
+        return ResponseEntity.ok(bestSellingBooks);
     }
 }
