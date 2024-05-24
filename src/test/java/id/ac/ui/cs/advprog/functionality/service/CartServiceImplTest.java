@@ -2,14 +2,10 @@ package id.ac.ui.cs.advprog.functionality.service;
 
 import id.ac.ui.cs.advprog.functionality.dto.AddBookCartDto;
 import id.ac.ui.cs.advprog.functionality.enums.OrderStatus;
-import id.ac.ui.cs.advprog.functionality.model.Book;
 import id.ac.ui.cs.advprog.functionality.model.CartItems;
 import id.ac.ui.cs.advprog.functionality.model.Order;
-import id.ac.ui.cs.advprog.functionality.model.User;
-import id.ac.ui.cs.advprog.functionality.repository.BookRepository;
 import id.ac.ui.cs.advprog.functionality.repository.CartItemRepository;
 import id.ac.ui.cs.advprog.functionality.repository.OrderRepository;
-import id.ac.ui.cs.advprog.functionality.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

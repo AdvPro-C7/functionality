@@ -2,14 +2,10 @@ package id.ac.ui.cs.advprog.functionality.service;
 
 import id.ac.ui.cs.advprog.functionality.dto.*;
 import id.ac.ui.cs.advprog.functionality.enums.OrderStatus;
-import id.ac.ui.cs.advprog.functionality.model.Book;
 import id.ac.ui.cs.advprog.functionality.model.CartItems;
 import id.ac.ui.cs.advprog.functionality.model.Order;
-import id.ac.ui.cs.advprog.functionality.model.User;
-import id.ac.ui.cs.advprog.functionality.repository.BookRepository;
 import id.ac.ui.cs.advprog.functionality.repository.CartItemRepository;
 import id.ac.ui.cs.advprog.functionality.repository.OrderRepository;
-import id.ac.ui.cs.advprog.functionality.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class CartServiceImpl implements CartService {

@@ -2,9 +2,6 @@ package id.ac.ui.cs.advprog.functionality.dto;
 
 
 import id.ac.ui.cs.advprog.functionality.enums.OrderStatus;
-import id.ac.ui.cs.advprog.functionality.model.CartItems;
-import id.ac.ui.cs.advprog.functionality.model.User;
-import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.Date;

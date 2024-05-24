@@ -1,8 +1,5 @@
 package id.ac.ui.cs.advprog.functionality.controller;
 
-import id.ac.ui.cs.advprog.functionality.enums.BookSortCriteria;
-import id.ac.ui.cs.advprog.functionality.model.Book;
-import id.ac.ui.cs.advprog.functionality.service.BookService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
