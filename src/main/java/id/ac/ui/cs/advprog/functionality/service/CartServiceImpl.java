@@ -9,11 +9,13 @@ import id.ac.ui.cs.advprog.functionality.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -26,12 +28,19 @@ public class CartServiceImpl implements CartService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Async
+    public CompletableFuture<ResponseEntity<BookDto>> getBookDetails(int bookId) {
+        String bookServiceUrl = "http://localhost:8081/api/book-details/" + bookId;
+        ResponseEntity<BookDto> response = restTemplate.getForEntity(bookServiceUrl, BookDto.class);
+        return CompletableFuture.completedFuture(response);
+    }
+
     public ResponseEntity<?> addBookToCart(AddBookCartDto addBookCartDto) {
         Order activeOrder = orderRepository.findByUserIdAndStatus(addBookCartDto.getUserId(), OrderStatus.PENDING);
         Optional<CartItems> optionalCartItems = cartItemRepository.findByBookIdAndOrderIdAndUserId(
                 addBookCartDto.getBookId(), activeOrder.getId(), addBookCartDto.getUserId());
-        String bookServiceUrl = "http://localhost:8081/api/book-details/" + addBookCartDto.getBookId();
-        ResponseEntity<BookDto> bookResponse = restTemplate.getForEntity(bookServiceUrl, BookDto.class);
+        
+        CompletableFuture<ResponseEntity<BookDto>> bookFuture = getBookDetails(addBookCartDto.getBookId());
 
         if (optionalCartItems.isPresent()) {
             CartItems existingCartItem = optionalCartItems.get();
@@ -44,8 +53,8 @@ public class CartServiceImpl implements CartService {
 
             return ResponseEntity.ok("Book quantity updated in the cart");
         } else {
-            if (bookResponse.getStatusCode() == HttpStatus.OK) {
-                BookDto book = bookResponse.getBody();
+            if (bookFuture.join().getStatusCode() == HttpStatus.OK) {
+                BookDto book = bookFuture.join().getBody();
                 if (book != null) {
                     CartItems cart = new CartItems();
                     cart.setBookId(book.getId());
@@ -103,12 +112,11 @@ public class CartServiceImpl implements CartService {
         Optional<CartItems> optionalCartItems = cartItemRepository.findByBookIdAndOrderIdAndUserId(
                 addBookCartDto.getBookId(), userOrder.getId(), addBookCartDto.getUserId());
 
-        String bookServiceUrl = "http://localhost:8081/api/book-details/" + addBookCartDto.getBookId();
-        ResponseEntity<BookDto> bookResponse = restTemplate.getForEntity(bookServiceUrl, BookDto.class);
+        CompletableFuture<ResponseEntity<BookDto>> bookFuture = getBookDetails(addBookCartDto.getBookId());
 
         if (optionalCartItems.isPresent()) {
-            if (bookResponse.getStatusCode() == HttpStatus.OK) {
-                BookDto book = bookResponse.getBody();
+            if (bookFuture.join().getStatusCode() == HttpStatus.OK) {
+                BookDto book = bookFuture.join().getBody();
                 if (book != null) {
                     CartItems cartItem = optionalCartItems.get();
                     userOrder.setTotalPrice(userOrder.getTotalPrice() + book.getPrice());
