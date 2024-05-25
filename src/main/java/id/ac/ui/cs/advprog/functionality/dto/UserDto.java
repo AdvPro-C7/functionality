@@ -1,11 +1,8 @@
 package id.ac.ui.cs.advprog.functionality.dto;
 
-
 import lombok.Data;
 
 @Data
-public class AddBookCartDto {
+public class UserDto {
     private Long userId;
-    private int bookId;
-    private int quantity;
 }

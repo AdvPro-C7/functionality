@@ -1,13 +1,10 @@
 package id.ac.ui.cs.advprog.functionality.controller;
 
 
-import id.ac.ui.cs.advprog.functionality.dto.AddBookCartDto;
-import id.ac.ui.cs.advprog.functionality.dto.OrderDto;
-import id.ac.ui.cs.advprog.functionality.dto.PaymentDto;
-import id.ac.ui.cs.advprog.functionality.dto.PlaceOrderDto;
+import id.ac.ui.cs.advprog.functionality.dto.*;
+import id.ac.ui.cs.advprog.functionality.model.Order;
 import id.ac.ui.cs.advprog.functionality.service.CartService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,24 +22,25 @@ public class CartController {
     }
 
     @PostMapping("/createCart")
-    public ResponseEntity<?> createCart(@RequestBody Long userId) {
+    public ResponseEntity<?> createCart(@RequestBody UserDto userDto) {
+        Long userId = userDto.getUserId();
         return cartService.createCart(userId);
     }
 
-    @GetMapping("/cart")
-    public ResponseEntity<?> getCartByUserId(@RequestBody Long userId) {
-        OrderDto orderDto = cartService.getCartByUserId(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(orderDto);
+    @GetMapping("/userCart")
+    public ResponseEntity<?> getCartByUserId(@RequestBody UserDto userDto) {
+        Long userId = userDto.getUserId();
+        return cartService.getCartByUserId(userId);
     }
 
     @PostMapping("/addition")
-    public ResponseEntity<OrderDto> increaseBookQuantity(@RequestBody AddBookCartDto addBookCartDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(cartService.increaseProductQuantity(addBookCartDto));
+    public ResponseEntity<?> increaseBookQuantity(@RequestBody AddBookCartDto addBookCartDto) {
+        return cartService.increaseProductQuantity(addBookCartDto);
     }
 
     @PostMapping("/deduction")
-    public ResponseEntity<OrderDto> decreaseBookQuantity(@RequestBody AddBookCartDto addBookCartDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(cartService.decreaseProductQuantity(addBookCartDto));
+    public ResponseEntity<?> decreaseBookQuantity(@RequestBody AddBookCartDto addBookCartDto) {
+        return cartService.decreaseProductQuantity(addBookCartDto);
     }
 
     @DeleteMapping("/cart/{cartItemId}")
@@ -51,8 +49,8 @@ public class CartController {
     }
 
     @PostMapping("/placeOrder")
-    public ResponseEntity<OrderDto> placeOrder(@RequestBody PlaceOrderDto placeOrderDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(cartService.placeOrder(placeOrderDto));
+    public ResponseEntity<?> placeOrder(@RequestBody PlaceOrderDto placeOrderDto) {
+        return cartService.placeOrder(placeOrderDto);
     }
 
     @PostMapping("/orders/pay")
@@ -68,16 +66,18 @@ public class CartController {
     }
 
 
-    @GetMapping("/orders/waiting-shipping")
-    public ResponseEntity<List<OrderDto>> getOrdersWaitingShipping(@RequestBody  Long userId) {
-        List<OrderDto> orders = cartService.getOrdersWaitingShipping(userId);
-        return ResponseEntity.ok(orders);
-    }
+   @GetMapping("/orders/waiting-shipping")
+   public ResponseEntity<List<Order>> getOrdersWaitingShipping(@RequestBody UserDto userDto) {
+       Long userId = userDto.getUserId();
+       List<Order> orders = cartService.getOrdersWaitingShipping(userId);
+       return ResponseEntity.ok(orders);
+   }
 
-    @GetMapping("/orders/waiting-payment")
-    public ResponseEntity<List<OrderDto>> getOrdersWaitingPayment(@RequestBody  Long userId) {
-        List<OrderDto> orders = cartService.getOrdersWaitingPayment(userId);
-        return ResponseEntity.ok(orders);
-    }
+   @GetMapping("/orders/waiting-payment")
+   public ResponseEntity<List<Order>> getOrdersWaitingPayment(@RequestBody UserDto userDto) {
+       Long userId = userDto.getUserId();
+       List<Order> orders = cartService.getOrdersWaitingPayment(userId);
+       return ResponseEntity.ok(orders);
+   }
 
 }

@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
@@ -23,106 +24,144 @@ public class CartServiceImpl implements CartService {
     private CartItemRepository cartItemRepository;
 
     @Autowired
-    private BookRepository bookRepository;
-
-    @Autowired
-    private UserRepository userRepository;
+    private RestTemplate restTemplate;
 
     public ResponseEntity<?> addBookToCart(AddBookCartDto addBookCartDto) {
         Order activeOrder = orderRepository.findByUserIdAndStatus(addBookCartDto.getUserId(), OrderStatus.PENDING);
         Optional<CartItems> optionalCartItems = cartItemRepository.findByBookIdAndOrderIdAndUserId(
-                addBookCartDto.getBookId(),activeOrder.getId(),addBookCartDto.getUserId()
-        );
-        if(optionalCartItems.isPresent()){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Book is already in the cart");
-        }else{
-            Optional<Book> optionalBook = bookRepository.findById(addBookCartDto.getBookId());
-            Optional<User> optionalUser = userRepository.findById(addBookCartDto.getUserId());
+                addBookCartDto.getBookId(), activeOrder.getId(), addBookCartDto.getUserId());
+        String bookServiceUrl = "http://localhost:8081/api/book-details/" + addBookCartDto.getBookId();
+        ResponseEntity<BookDto> bookResponse = restTemplate.getForEntity(bookServiceUrl, BookDto.class);
 
-            if(optionalBook.isPresent()&& optionalUser.isPresent()){
-                CartItems cart = new CartItems();
-                cart.setBook(optionalBook.get());
-                cart.setPrice(optionalBook.get().getPrice());
-                cart.setQuantity(1L);
-                cart.setUser(optionalUser.get());
-                cart.setOrder(activeOrder);
+        if (optionalCartItems.isPresent()) {
+            CartItems existingCartItem = optionalCartItems.get();
+            existingCartItem.setQuantity(existingCartItem.getQuantity() + addBookCartDto.getQuantity());
+            cartItemRepository.save(existingCartItem);
 
-                cartItemRepository.save(cart);
+            activeOrder.setTotalPrice(
+                    activeOrder.getTotalPrice() + (existingCartItem.getPrice() * addBookCartDto.getQuantity()));
+            orderRepository.save(activeOrder);
 
-                activeOrder.setTotalPrice(activeOrder.getTotalPrice()+cart.getPrice());
-                activeOrder.getCartItems().add(cart);
+            return ResponseEntity.ok("Book quantity updated in the cart");
+        } else {
+            if (bookResponse.getStatusCode() == HttpStatus.OK) {
+                BookDto book = bookResponse.getBody();
+                if (book != null) {
+                    CartItems cart = new CartItems();
+                    cart.setBookId(book.getId());
+                    cart.setQuantity(addBookCartDto.getQuantity());
+                    cart.setBookTitle(book.getTitle());
+                    cart.setAuthor(book.getAuthor());
+                    cart.setPrice(book.getPrice());
+                    cart.setUserId(addBookCartDto.getUserId());
+                    cart.setOrder(activeOrder);
 
-                orderRepository.save(activeOrder);
+                    cartItemRepository.save(cart);
 
-                return ResponseEntity.status(HttpStatus.CREATED).body("Book added to cart successfully");
-            }
-            else{
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+                    activeOrder.setTotalPrice(activeOrder.getTotalPrice() + cart.getPrice());
+                    activeOrder.getCartItems().add(cart);
+
+                    orderRepository.save(activeOrder);
+
+                    return ResponseEntity.status(HttpStatus.CREATED).body(book);
+                } else {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body("Book is missing contact admin");
+                }
+
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
         }
     }
 
     public ResponseEntity<?> createCart(Long userId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isPresent()) {
-            Order newOrder = new Order();
-            newOrder.setStatus(OrderStatus.PENDING);
-            newOrder.setTotalPrice(0L);
-            newOrder.setUser(optionalUser.get());
-            newOrder.setCartItems(new ArrayList<>());
-            Order savedOrder = orderRepository.save(newOrder);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedOrder);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-    }
-
-    public OrderDto getCartByUserId(Long userId){
         Order activeOrder = orderRepository.findByUserIdAndStatus(userId, OrderStatus.PENDING);
-        List<CartItemsDto> cartItemsDtoList = activeOrder.getCartItems().stream().map(CartItems::getCartDto)
-                .toList();
-        OrderDto orderDto = new OrderDto();
-        orderDto.setTotalPrice(activeOrder.getTotalPrice());
-        orderDto.setId(activeOrder.getId());
-        orderDto.setStatus(activeOrder.getStatus());
-        orderDto.setCartItems(cartItemsDtoList);
-        return orderDto;
+        if (activeOrder != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Cart with that user id already created");
+        }
+        Order newOrder = new Order();
+        newOrder.setStatus(OrderStatus.PENDING);
+        newOrder.setTotalPrice(0.0);
+        newOrder.setUserId(userId);
+        newOrder.setCartItems(new ArrayList<>());
+        Order savedOrder = orderRepository.save(newOrder);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedOrder);
     }
 
-    public OrderDto increaseProductQuantity(AddBookCartDto addBookCartDto){
-        Order activeOrder = orderRepository.findByUserIdAndStatus(addBookCartDto.getUserId(), OrderStatus.PENDING);
-        Optional<Book> optionalBook = bookRepository.findById(addBookCartDto.getBookId());
-        Optional<CartItems> optionalCartItems = cartItemRepository.findByBookIdAndOrderIdAndUserId(
-                addBookCartDto.getBookId(),activeOrder.getId(),addBookCartDto.getUserId()
-        );
-
-        if(optionalBook.isPresent() && optionalCartItems.isPresent()){
-            CartItems cartItem = optionalCartItems.get();
-            Book book = optionalBook.get();
-            activeOrder.setTotalPrice(activeOrder.getTotalPrice()+book.getPrice());
-
-            cartItem.setQuantity(cartItem.getQuantity()+1);
-            cartItemRepository.save(cartItem);
+    public ResponseEntity<?> getCartByUserId(Long userId) {
+        Order activeOrder = orderRepository.findByUserIdAndStatus(userId, OrderStatus.PENDING);
+        if (activeOrder != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(activeOrder);
         }
-        return null;
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
-    public OrderDto decreaseProductQuantity(AddBookCartDto addBookCartDto){
-        Order activeOrder = orderRepository.findByUserIdAndStatus(addBookCartDto.getUserId(), OrderStatus.PENDING);
-        Optional<Book> optionalBook = bookRepository.findById(addBookCartDto.getBookId());
+    public ResponseEntity<?> increaseProductQuantity(AddBookCartDto addBookCartDto) {
+        Order userOrder = orderRepository.findByUserIdAndStatus(addBookCartDto.getUserId(), OrderStatus.PENDING);
+
         Optional<CartItems> optionalCartItems = cartItemRepository.findByBookIdAndOrderIdAndUserId(
-                addBookCartDto.getBookId(),activeOrder.getId(),addBookCartDto.getUserId()
-        );
+                addBookCartDto.getBookId(), userOrder.getId(), addBookCartDto.getUserId());
 
-        if(optionalBook.isPresent() && optionalCartItems.isPresent()){
-            CartItems cartItem = optionalCartItems.get();
-            Book book = optionalBook.get();
-            activeOrder.setTotalPrice(activeOrder.getTotalPrice()-book.getPrice());
+        String bookServiceUrl = "http://localhost:8081/api/book-details/" + addBookCartDto.getBookId();
+        ResponseEntity<BookDto> bookResponse = restTemplate.getForEntity(bookServiceUrl, BookDto.class);
 
-            cartItem.setQuantity(cartItem.getQuantity()-1);
-            cartItemRepository.save(cartItem);
+        if (optionalCartItems.isPresent()) {
+            if (bookResponse.getStatusCode() == HttpStatus.OK) {
+                BookDto book = bookResponse.getBody();
+                if (book != null) {
+                    CartItems cartItem = optionalCartItems.get();
+                    userOrder.setTotalPrice(userOrder.getTotalPrice() + book.getPrice());
+
+                    cartItem.setQuantity(cartItem.getQuantity() + 1);
+                    cartItemRepository.save(cartItem);
+
+                    return ResponseEntity.status(HttpStatus.OK).body(userOrder);
+                } else {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body("Book is missing contact admin");
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return null;
+    }
+
+    //
+    public ResponseEntity<?> decreaseProductQuantity(AddBookCartDto addBookCartDto) {
+        Order userOrder = orderRepository.findByUserIdAndStatus(addBookCartDto.getUserId(), OrderStatus.PENDING);
+
+        Optional<CartItems> optionalCartItems = cartItemRepository.findByBookIdAndOrderIdAndUserId(
+                addBookCartDto.getBookId(), userOrder.getId(), addBookCartDto.getUserId());
+
+        String bookServiceUrl = "http://localhost:8081/api/book-details/" + addBookCartDto.getBookId();
+        ResponseEntity<BookDto> bookResponse = restTemplate.getForEntity(bookServiceUrl, BookDto.class);
+
+        if (optionalCartItems.isPresent()) {
+            if (bookResponse.getStatusCode() == HttpStatus.OK) {
+                BookDto book = bookResponse.getBody();
+                if (book != null) {
+                    CartItems cartItem = optionalCartItems.get();
+                    userOrder.setTotalPrice(userOrder.getTotalPrice() + book.getPrice());
+
+                    cartItem.setQuantity(cartItem.getQuantity() - 1);
+                    cartItemRepository.save(cartItem);
+
+                    return ResponseEntity.status(HttpStatus.OK).body(userOrder);
+                } else {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body("Book is missing contact admin");
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     public ResponseEntity<?> deleteCartItem(Long cartItemId) {
@@ -131,7 +170,8 @@ public class CartServiceImpl implements CartService {
             CartItems cartItem = optionalCartItem.get();
             Order order = cartItem.getOrder();
 
-            order.setTotalPrice(order.getTotalPrice() - (cartItem.getPrice() * cartItem.getQuantity()));
+            order.setTotalPrice(order.getTotalPrice() - (cartItem.getPrice() *
+                    cartItem.getQuantity()));
             order.getCartItems().remove(cartItem);
 
             cartItemRepository.delete(cartItem);
@@ -144,12 +184,11 @@ public class CartServiceImpl implements CartService {
         }
     }
 
-    public OrderDto placeOrder(PlaceOrderDto placeOrderDto) {
-        Order activeOrder = orderRepository.findByUserIdAndStatus(placeOrderDto.getUserId(), OrderStatus.PENDING);
-        Optional<User> optionalUser = userRepository.findById(placeOrderDto.getUserId());
+    public ResponseEntity<?> placeOrder(PlaceOrderDto placeOrderDto) {
+        Order activeOrder = orderRepository.findByUserIdAndStatus(placeOrderDto.getUserId(),
+                OrderStatus.PENDING);
 
-
-        if (optionalUser.isPresent() && activeOrder != null) {
+        if (activeOrder != null) {
             activeOrder.setShippingAddress(placeOrderDto.getAddress());
             activeOrder.setOrderDate(new Date());
             activeOrder.setStatus(OrderStatus.WAITING_PAYMENT);
@@ -157,22 +196,22 @@ public class CartServiceImpl implements CartService {
 
             Order newOrder = new Order();
             newOrder.setStatus(OrderStatus.PENDING);
-            newOrder.setTotalPrice(0L);
-            newOrder.setUser(optionalUser.get());
+            newOrder.setTotalPrice(0.0);
+            newOrder.setUserId(placeOrderDto.getUserId());
 
             orderRepository.save(newOrder);
 
-            return activeOrder.getOrderDto();
+            return ResponseEntity.status(HttpStatus.CREATED).body(activeOrder);
 
         }
-        return null;
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cart not found");
     }
 
     public ResponseEntity<?> payForOrder(PaymentDto paymentDto) {
         Optional<Order> optionalOrder = orderRepository.findById(paymentDto.getOrderId());
         if (optionalOrder.isPresent()) {
             Order order = optionalOrder.get();
-            if (!order.getUser().getId().equals(paymentDto.getUserId())) {
+            if (!order.getUserId().equals(paymentDto.getUserId())) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User is not authorized to pay for this order");
             }
 
@@ -193,12 +232,13 @@ public class CartServiceImpl implements CartService {
         Optional<Order> optionalOrder = orderRepository.findById(paymentDto.getOrderId());
         if (optionalOrder.isPresent()) {
             Order order = optionalOrder.get();
-            if (!order.getUser().getId().equals(paymentDto.getUserId())) {
+            if (!order.getUserId().equals(paymentDto.getUserId())) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User is not authorized to cancel this order");
             }
 
             if (order.getStatus() != OrderStatus.WAITING_PAYMENT) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Order cannot be canceled as it is not waiting for payment");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("Order cannot be canceled as it is not waiting for payment");
             }
 
             order.setStatus(OrderStatus.CANCELLED);
@@ -210,19 +250,11 @@ public class CartServiceImpl implements CartService {
         }
     }
 
+     public List<Order> getOrdersWaitingShipping(Long userId) {
+     return orderRepository.findAllByUserIdAndStatus(userId,OrderStatus.WAITING_SHIPPING);
+     }
 
-    public List<OrderDto> getOrdersWaitingShipping(Long userId) {
-        return orderRepository.findAllByUserIdAndStatus(userId, OrderStatus.WAITING_SHIPPING)
-                .stream()
-                .map(Order::getOrderDto)
-                .toList();
+     public List<Order> getOrdersWaitingPayment(Long userId) {
+        return orderRepository.findAllByUserIdAndStatus(userId,OrderStatus.WAITING_PAYMENT);
     }
-
-    public List<OrderDto> getOrdersWaitingPayment(Long userId) {
-        return orderRepository.findAllByUserIdAndStatus(userId, OrderStatus.WAITING_PAYMENT)
-                .stream()
-                .map(Order::getOrderDto)
-                .toList();
-    }
-
 }
