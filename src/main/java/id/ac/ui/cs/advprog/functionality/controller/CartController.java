@@ -4,6 +4,7 @@ package id.ac.ui.cs.advprog.functionality.controller;
 import id.ac.ui.cs.advprog.functionality.dto.*;
 import id.ac.ui.cs.advprog.functionality.model.Order;
 import id.ac.ui.cs.advprog.functionality.service.CartService;
+import id.ac.ui.cs.advprog.functionality.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class CartController {
         return cartService.createCart(userId);
     }
 
-    @GetMapping("/userCart")
+    @PostMapping("/userCart")
     public ResponseEntity<?> getCartByUserId(@RequestBody UserDto userDto) {
         Long userId = userDto.getUserId();
         return cartService.getCartByUserId(userId);
@@ -47,37 +48,5 @@ public class CartController {
     public ResponseEntity<?> deleteCartItem(@PathVariable Long cartItemId) {
         return cartService.deleteCartItem(cartItemId);
     }
-
-    @PostMapping("/placeOrder")
-    public ResponseEntity<?> placeOrder(@RequestBody PlaceOrderDto placeOrderDto) {
-        return cartService.placeOrder(placeOrderDto);
-    }
-
-    @PostMapping("/orders/pay")
-    public ResponseEntity<?> payForOrder(@RequestBody PaymentDto paymentDto) {
-        ResponseEntity<?> response = cartService.payForOrder(paymentDto);
-        return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
-    }
-
-    @PostMapping("/orders/cancel")
-    public ResponseEntity<?> cancelOrder(@RequestBody PaymentDto paymentDto) {
-        ResponseEntity<?> response = cartService.cancelOrder(paymentDto);
-        return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
-    }
-
-
-   @GetMapping("/orders/waiting-shipping")
-   public ResponseEntity<List<Order>> getOrdersWaitingShipping(@RequestBody UserDto userDto) {
-       Long userId = userDto.getUserId();
-       List<Order> orders = cartService.getOrdersWaitingShipping(userId);
-       return ResponseEntity.ok(orders);
-   }
-
-   @GetMapping("/orders/waiting-payment")
-   public ResponseEntity<List<Order>> getOrdersWaitingPayment(@RequestBody UserDto userDto) {
-       Long userId = userDto.getUserId();
-       List<Order> orders = cartService.getOrdersWaitingPayment(userId);
-       return ResponseEntity.ok(orders);
-   }
 
 }

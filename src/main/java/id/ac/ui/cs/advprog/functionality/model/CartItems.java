@@ -9,9 +9,6 @@ import lombok.Data;
 @Data
 public class CartItems {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     private int bookId;
 
     private int quantity;
@@ -21,6 +18,8 @@ public class CartItems {
     private String author;
 
     private double price;
+
+    private String coverPicture;
 
     private Long userId;
 

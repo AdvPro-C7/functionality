@@ -15,9 +15,5 @@ public interface CartService {
     ResponseEntity<?> increaseProductQuantity(AddBookCartDto addBookCartDto);
     ResponseEntity<?> decreaseProductQuantity(AddBookCartDto addBookCartDto);
     ResponseEntity<?> deleteCartItem(Long cartItemId);
-    ResponseEntity<?> placeOrder(PlaceOrderDto placeOrderDto);
-    ResponseEntity<?> payForOrder(PaymentDto paymentDto);
-    ResponseEntity<?> cancelOrder(PaymentDto paymentDto) ;
-   List<Order> getOrdersWaitingShipping(Long userId);
-   List<Order> getOrdersWaitingPayment(Long userId);
+
 }

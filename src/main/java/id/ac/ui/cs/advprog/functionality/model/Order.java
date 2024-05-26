@@ -4,6 +4,8 @@ package id.ac.ui.cs.advprog.functionality.model;
 import id.ac.ui.cs.advprog.functionality.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,6 +29,6 @@ public class Order {
     private Long userId;
 
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "order")
-    private List<CartItems> cartItems;
+    private List<CartItems> cartItems = new ArrayList<>();;
 
 }

@@ -16,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -31,16 +32,20 @@ public class CartServiceImpl implements CartService {
     @Async
     public CompletableFuture<ResponseEntity<BookDto>> getBookDetails(int bookId) {
         String bookServiceUrl = "http://localhost:8081/api/book-details/" + bookId;
-        ResponseEntity<BookDto> response = restTemplate.getForEntity(bookServiceUrl, BookDto.class);
-        return CompletableFuture.completedFuture(response);
+        try {
+            ResponseEntity<BookDto> response = restTemplate.getForEntity(bookServiceUrl, BookDto.class);
+            return CompletableFuture.completedFuture(response);
+        } catch (RuntimeException e) {
+            return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
+        }
     }
 
     public ResponseEntity<?> addBookToCart(AddBookCartDto addBookCartDto) {
         Order activeOrder = orderRepository.findByUserIdAndStatus(addBookCartDto.getUserId(), OrderStatus.PENDING);
         Optional<CartItems> optionalCartItems = cartItemRepository.findByBookIdAndOrderIdAndUserId(
                 addBookCartDto.getBookId(), activeOrder.getId(), addBookCartDto.getUserId());
-        
-        CompletableFuture<ResponseEntity<BookDto>> bookFuture = getBookDetails(addBookCartDto.getBookId());
+
+        ResponseEntity<BookDto> bookResponse = getBookDetails(addBookCartDto.getBookId()).join();
 
         if (optionalCartItems.isPresent()) {
             CartItems existingCartItem = optionalCartItems.get();
@@ -53,8 +58,8 @@ public class CartServiceImpl implements CartService {
 
             return ResponseEntity.ok("Book quantity updated in the cart");
         } else {
-            if (bookFuture.join().getStatusCode() == HttpStatus.OK) {
-                BookDto book = bookFuture.join().getBody();
+            if (bookResponse.getStatusCode() == HttpStatus.OK) {
+                BookDto book = bookResponse.getBody();
                 if (book != null) {
                     CartItems cart = new CartItems();
                     cart.setBookId(book.getId());
@@ -63,6 +68,7 @@ public class CartServiceImpl implements CartService {
                     cart.setAuthor(book.getAuthor());
                     cart.setPrice(book.getPrice());
                     cart.setUserId(addBookCartDto.getUserId());
+                    cart.setCoverPicture(book.getCoverPicture());
                     cart.setOrder(activeOrder);
 
                     cartItemRepository.save(cart);
@@ -77,7 +83,6 @@ public class CartServiceImpl implements CartService {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .body("Book is missing contact admin");
                 }
-
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
@@ -94,8 +99,8 @@ public class CartServiceImpl implements CartService {
         newOrder.setTotalPrice(0.0);
         newOrder.setUserId(userId);
         newOrder.setCartItems(new ArrayList<>());
-        Order savedOrder = orderRepository.save(newOrder);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedOrder);
+        orderRepository.save(newOrder);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newOrder);
     }
 
     public ResponseEntity<?> getCartByUserId(Long userId) {
@@ -108,55 +113,21 @@ public class CartServiceImpl implements CartService {
 
     public ResponseEntity<?> increaseProductQuantity(AddBookCartDto addBookCartDto) {
         Order userOrder = orderRepository.findByUserIdAndStatus(addBookCartDto.getUserId(), OrderStatus.PENDING);
-
         Optional<CartItems> optionalCartItems = cartItemRepository.findByBookIdAndOrderIdAndUserId(
                 addBookCartDto.getBookId(), userOrder.getId(), addBookCartDto.getUserId());
 
-        CompletableFuture<ResponseEntity<BookDto>> bookFuture = getBookDetails(addBookCartDto.getBookId());
-
-        if (optionalCartItems.isPresent()) {
-            if (bookFuture.join().getStatusCode() == HttpStatus.OK) {
-                BookDto book = bookFuture.join().getBody();
-                if (book != null) {
-                    CartItems cartItem = optionalCartItems.get();
-                    userOrder.setTotalPrice(userOrder.getTotalPrice() + book.getPrice());
-
-                    cartItem.setQuantity(cartItem.getQuantity() + 1);
-                    cartItemRepository.save(cartItem);
-
-                    return ResponseEntity.status(HttpStatus.OK).body(userOrder);
-                } else {
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .body("Book is missing contact admin");
-                }
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-    }
-
-    //
-    public ResponseEntity<?> decreaseProductQuantity(AddBookCartDto addBookCartDto) {
-        Order userOrder = orderRepository.findByUserIdAndStatus(addBookCartDto.getUserId(), OrderStatus.PENDING);
-
-        Optional<CartItems> optionalCartItems = cartItemRepository.findByBookIdAndOrderIdAndUserId(
-                addBookCartDto.getBookId(), userOrder.getId(), addBookCartDto.getUserId());
-
-        String bookServiceUrl = "http://localhost:8081/api/book-details/" + addBookCartDto.getBookId();
-        ResponseEntity<BookDto> bookResponse = restTemplate.getForEntity(bookServiceUrl, BookDto.class);
+        ResponseEntity<BookDto> bookResponse = getBookDetails(addBookCartDto.getBookId()).join();
 
         if (optionalCartItems.isPresent()) {
             if (bookResponse.getStatusCode() == HttpStatus.OK) {
                 BookDto book = bookResponse.getBody();
                 if (book != null) {
                     CartItems cartItem = optionalCartItems.get();
-                    userOrder.setTotalPrice(userOrder.getTotalPrice() + book.getPrice());
-
-                    cartItem.setQuantity(cartItem.getQuantity() - 1);
+                    cartItem.setQuantity(cartItem.getQuantity() + 1);
                     cartItemRepository.save(cartItem);
+
+                    userOrder.setTotalPrice(userOrder.getTotalPrice() + book.getPrice());
+                    orderRepository.save(userOrder);
 
                     return ResponseEntity.status(HttpStatus.OK).body(userOrder);
                 } else {
@@ -164,9 +135,42 @@ public class CartServiceImpl implements CartService {
                             .body("Book is missing contact admin");
                 }
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Book is missing contact admin");
             }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
 
+    public ResponseEntity<?> decreaseProductQuantity(AddBookCartDto addBookCartDto) {
+        Order userOrder = orderRepository.findByUserIdAndStatus(addBookCartDto.getUserId(), OrderStatus.PENDING);
+
+        Optional<CartItems> optionalCartItems = cartItemRepository.findByBookIdAndOrderIdAndUserId(
+                addBookCartDto.getBookId(), userOrder.getId(), addBookCartDto.getUserId());
+
+        ResponseEntity<BookDto> bookResponse = getBookDetails(addBookCartDto.getBookId()).join();
+
+        if (optionalCartItems.isPresent()) {
+            if (bookResponse.getStatusCode() == HttpStatus.OK) {
+                BookDto book = bookResponse.getBody();
+                if (book != null) {
+                    CartItems cartItem = optionalCartItems.get();
+                    cartItem.setQuantity(cartItem.getQuantity() - 1);
+                    cartItemRepository.save(cartItem);
+
+                    userOrder.setTotalPrice(userOrder.getTotalPrice() - book.getPrice());
+                    orderRepository.save(userOrder);
+
+                    return ResponseEntity.status(HttpStatus.OK).body(userOrder);
+                } else {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body("Book is missing contact admin");
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Book is missing contact admin");
+            }
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -191,78 +195,5 @@ public class CartServiceImpl implements CartService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cart item not found");
         }
     }
-
-    public ResponseEntity<?> placeOrder(PlaceOrderDto placeOrderDto) {
-        Order activeOrder = orderRepository.findByUserIdAndStatus(placeOrderDto.getUserId(),
-                OrderStatus.PENDING);
-
-        if (activeOrder != null) {
-            activeOrder.setShippingAddress(placeOrderDto.getAddress());
-            activeOrder.setOrderDate(new Date());
-            activeOrder.setStatus(OrderStatus.WAITING_PAYMENT);
-            orderRepository.save(activeOrder);
-
-            Order newOrder = new Order();
-            newOrder.setStatus(OrderStatus.PENDING);
-            newOrder.setTotalPrice(0.0);
-            newOrder.setUserId(placeOrderDto.getUserId());
-
-            orderRepository.save(newOrder);
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(activeOrder);
-
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cart not found");
-    }
-
-    public ResponseEntity<?> payForOrder(PaymentDto paymentDto) {
-        Optional<Order> optionalOrder = orderRepository.findById(paymentDto.getOrderId());
-        if (optionalOrder.isPresent()) {
-            Order order = optionalOrder.get();
-            if (!order.getUserId().equals(paymentDto.getUserId())) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User is not authorized to pay for this order");
-            }
-
-            if (order.getStatus() != OrderStatus.WAITING_PAYMENT) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Order is not waiting for payment");
-            }
-
-            order.setStatus(OrderStatus.WAITING_SHIPPING);
-            orderRepository.save(order);
-
-            return ResponseEntity.status(HttpStatus.OK).body("Payment successful");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order not found");
-        }
-    }
-
-    public ResponseEntity<?> cancelOrder(@RequestBody PaymentDto paymentDto) {
-        Optional<Order> optionalOrder = orderRepository.findById(paymentDto.getOrderId());
-        if (optionalOrder.isPresent()) {
-            Order order = optionalOrder.get();
-            if (!order.getUserId().equals(paymentDto.getUserId())) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User is not authorized to cancel this order");
-            }
-
-            if (order.getStatus() != OrderStatus.WAITING_PAYMENT) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("Order cannot be canceled as it is not waiting for payment");
-            }
-
-            order.setStatus(OrderStatus.CANCELLED);
-            orderRepository.save(order);
-
-            return ResponseEntity.status(HttpStatus.OK).body("Order canceled successfully");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order not found");
-        }
-    }
-
-     public List<Order> getOrdersWaitingShipping(Long userId) {
-     return orderRepository.findAllByUserIdAndStatus(userId,OrderStatus.WAITING_SHIPPING);
-     }
-
-     public List<Order> getOrdersWaitingPayment(Long userId) {
-        return orderRepository.findAllByUserIdAndStatus(userId,OrderStatus.WAITING_PAYMENT);
-    }
+    
 }
