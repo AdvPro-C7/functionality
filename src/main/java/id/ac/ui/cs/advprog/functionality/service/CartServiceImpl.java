@@ -84,7 +84,8 @@ public class CartServiceImpl implements CartService {
                             .body("Book is missing contact admin");
                 }
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Book is missing contact admin");
             }
         }
     }
