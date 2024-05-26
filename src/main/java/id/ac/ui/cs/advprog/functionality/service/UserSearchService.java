@@ -9,5 +9,6 @@ public interface UserSearchService {
     public List<User> findByEmail(String email);
 
     public List<User> findByName(String name);
+
 }
 

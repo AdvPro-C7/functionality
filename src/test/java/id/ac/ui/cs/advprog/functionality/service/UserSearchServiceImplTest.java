@@ -3,6 +3,7 @@ package id.ac.ui.cs.advprog.functionality.service;
 import id.ac.ui.cs.advprog.functionality.model.User;
 import id.ac.ui.cs.advprog.functionality.repository.UserSearchByEmailRepository;
 import id.ac.ui.cs.advprog.functionality.repository.UserSearchByNameRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,9 +13,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,14 +29,20 @@ public class UserSearchServiceImplTest {
     @Mock
     UserSearchByEmailRepository userSearchByEmailRepository;
 
-    @Test
-    void testSearchByNameIfValidWithOneData(){
+    List<User> userData;
+    @BeforeEach
+    void setUp(){
+        userData = new ArrayList<>();
+
         User user1 = new User("Rey", "John@gmail.com", "0812", "Keren");
         User user2 = new User("Lex", "Arthur@gmail.com", "081212", "Keren");
 
-        List<User> userData = new ArrayList<>();
         userData.add(user1);
         userData.add(user2);
+    }
+
+    @Test
+    void testSearchByNameIfValidWithOneData(){
 
         List<User> expectedUsers = new ArrayList<>();
         expectedUsers.add(userData.getFirst());
@@ -49,13 +56,6 @@ public class UserSearchServiceImplTest {
 
     @Test
     void testSearchByEmailIfValidWIthOneData(){
-        User user1 = new User("Rey", "John@gmail.com", "0812", "Keren");
-        User user2 = new User("Lex", "Arthur@gmail.com", "081212", "Keren");
-
-        List<User> userData = new ArrayList<>();
-        userData.add(user1);
-        userData.add(user2);
-
         List<User> expectedUsers = new ArrayList<>();
         expectedUsers.add(userData.getFirst());
 
@@ -69,12 +69,6 @@ public class UserSearchServiceImplTest {
 
     @Test
     void testSearchByNameIfValidWithALlData(){
-        User user1 = new User("Rey", "John@gmail.com", "0812", "Keren");
-        User user2 = new User("Reyhan", "Arthur@gmail.com", "081212", "Keren");
-
-        List<User> userData = new ArrayList<>();
-        userData.add(user1);
-        userData.add(user2);
 
         List<User> expectedUsers = new ArrayList<>();
         expectedUsers.add(userData.getFirst());
@@ -89,12 +83,6 @@ public class UserSearchServiceImplTest {
 
     @Test
     void testSearchByEmailIfValidWithALlData(){
-        User user1 = new User("Rey", "John@gmail.com", "0812", "Keren");
-        User user2 = new User("Lex", "Jonathan@gmail.com", "081212", "Keren");
-
-        List<User> userData = new ArrayList<>();
-        userData.add(user1);
-        userData.add(user2);
 
         List<User> expectedUsers = new ArrayList<>();
         expectedUsers.add(userData.getFirst());
@@ -110,12 +98,6 @@ public class UserSearchServiceImplTest {
 
     @Test
     void testSearchByNameIfInvalidWithALlData(){
-        User user1 = new User("Rey", "John@gmail.com", "0812", "Keren");
-        User user2 = new User("Reyhan", "Arthur@gmail.com", "081212", "Keren");
-
-        List<User> userData = new ArrayList<>();
-        userData.add(user1);
-        userData.add(user2);
 
         List<User> expectedUsers = new ArrayList<>();
 
@@ -128,12 +110,6 @@ public class UserSearchServiceImplTest {
 
     @Test
     void testSearchByEmailIfInvalidWithALlData(){
-        User user1 = new User("Rey", "John@gmail.com", "0812", "Keren");
-        User user2 = new User("Lex", "Jonathan@gmail.com", "081212", "Keren");
-
-        List<User> userData = new ArrayList<>();
-        userData.add(user1);
-        userData.add(user2);
 
         List<User> expectedUsers = new ArrayList<>();
 
@@ -143,5 +119,23 @@ public class UserSearchServiceImplTest {
 
         assertEquals(actualUsers.size(), expectedUsers.size());
 
+    }
+
+    @Test
+    void testFindById(){
+        User user1 = userData.getFirst();
+        doReturn(Optional.of(user1)).when(userSearchByNameRepository).findById(user1.getId());
+
+        Optional<User> result = userSearchByNameRepository.findById(user1.getId());
+        assertTrue(result.isPresent());
+        assertEquals(user1.getId(), result.get().getId());
+    }
+
+    @Test
+    void testFindByIdIfNotFound(){
+        doReturn(Optional.empty()).when(userSearchByNameRepository).findById(10L);
+
+        Optional<User> result = userSearchByNameRepository.findById(10L);
+        assertTrue(result.isEmpty());
     }
 }

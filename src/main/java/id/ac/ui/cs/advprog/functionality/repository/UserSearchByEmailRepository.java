@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface UserSearchByEmailRepository extends JpaRepository<User, String> {
+public interface UserSearchByEmailRepository extends JpaRepository<User, Long> {
 
     List<User> findByEmailContainingIgnoreCase(String email);
 }
