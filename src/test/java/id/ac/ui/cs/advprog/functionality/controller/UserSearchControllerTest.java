@@ -24,6 +24,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import static org.hamcrest.Matchers.is;
+
 
 @ExtendWith(MockitoExtension.class)
 public class UserSearchControllerTest {
@@ -84,5 +86,40 @@ public class UserSearchControllerTest {
         mockMvc.perform(get("/users/search").param("nama", ""))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(0)));
+    }
+
+    @Test
+    public void testSearchId() throws Exception {
+
+        User user1 = new User("User1", "01@gmail.com", "01", "12345");
+
+        when(userSearchService.findById(1L)).thenReturn(user1);
+
+
+        mockMvc.perform(get("/users/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nama", is("User1")))
+                .andExpect(jsonPath("$.email", is("01@gmail.com")))
+                .andExpect(jsonPath("$.noTelp", is("01")));
+    }
+
+    @Test
+    public void testSearchIdIfIdNotFound() throws Exception {
+
+        when(userSearchService.findById(10L)).thenReturn(null);
+
+        mockMvc.perform(get("/users/10"))
+                .andExpect(status().isNotFound());
+    }
+
+
+    @Test
+    public void testGetUserByIdIfError() throws Exception {
+        // Mock the service method call to throw an exception
+        when(userSearchService.findById(1L)).thenThrow(new RuntimeException("Internal Server Error"));
+
+        // Perform the request and verify the result
+        mockMvc.perform(get("/users/1"))
+                .andExpect(status().isBadRequest());
     }
 }
