@@ -27,7 +27,10 @@ public class UserSearchServiceImpl implements UserSearchService{
         return userSearchByNameRepository.findByNamaContainingIgnoreCase(name);
     }
 
-
+    @Override
+    public User findById(Long id) {
+        return null;
+    }
 
 
 }
