@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface UserSearchByEmailRepository extends JpaRepository<User, String> {
 
-    List<User> findByEmailStartingWith(String email);
+    List<User> findByEmailContainingIgnoreCase(String email);
 }
