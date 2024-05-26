@@ -7,36 +7,63 @@ import java.time.LocalDate;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import java.time.LocalDate;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "users", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"email", "no_telp"})
+@Table(name = "\"user\"", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "email"),
+        @UniqueConstraint(columnNames = "no_telp"),
 })
+@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name= "nama")
+    @NotBlank
+    @Size(max = 128)
     private String nama;
 
-    @Column(name = "email")
+    @NotBlank
+    @Size(max = 256)
+    @Column(unique = true)
     private String email;
 
-    @Column(name = "no_telp")
+    @NotBlank
+    @Size(max = 64)
+    @Column(name = "no_telp", unique = true)
     private String noTelp;
 
-    @Column(name= "password")
+    @NotBlank
+    @Size(max = 128)
     private String password;
 
-    public User(){
+    private String foto;
 
-    }
+    @Column(name = "jenis_kelamin")
+    private String jenisKelamin;
+
+    @Column(name = "tanggal_lahir")
+    private LocalDate tanggalLahir;
+
+    private String bio;
+
+    @Column(name = "jumlah_peringatan")
+    private int jumlahPeringatan;
+
+    private String role;
+
     public User(String nama, String email, String noTelp, String password) {
         this.nama = nama;
         this.email = email;
         this.noTelp = noTelp;
         this.password = password;
+        this.role = "pelanggan";
     }
 }
