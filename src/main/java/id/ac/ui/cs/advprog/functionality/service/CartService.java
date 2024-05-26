@@ -15,5 +15,4 @@ public interface CartService {
     ResponseEntity<?> increaseProductQuantity(AddBookCartDto addBookCartDto);
     ResponseEntity<?> decreaseProductQuantity(AddBookCartDto addBookCartDto);
     ResponseEntity<?> deleteCartItem(Long cartItemId);
-
 }
