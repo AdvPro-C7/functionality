@@ -45,6 +45,9 @@ dependencies {
 	testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
 	testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
 
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
+ 	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
+
 }
 
 
