@@ -29,7 +29,7 @@ public class UserSearchServiceImpl implements UserSearchService{
 
     @Override
     public User findById(Long id) {
-        return null;
+        return userSearchByNameRepository.findById(id).orElse(null);
     }
 
 
