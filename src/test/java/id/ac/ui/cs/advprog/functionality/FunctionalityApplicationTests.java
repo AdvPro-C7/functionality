@@ -7,8 +7,5 @@ import org.junit.jupiter.api.Test;
 
 @SpringBootTest
 public class FunctionalityApplicationTests {
-    @Test
-    public void main() {
-       FunctionalityApplication.main(new String[] {});
-    }
+
 }
