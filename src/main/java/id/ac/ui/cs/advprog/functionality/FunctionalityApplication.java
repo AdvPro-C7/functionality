@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 @EnableAsync
+@Configuration
 public class FunctionalityApplication {
 
 	public static void main(String[] args) {
