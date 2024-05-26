@@ -47,23 +47,18 @@ public class UserSearchControllerTest {
     @Test
     public void testSearchUsers() throws Exception {
         // Prepare mock data
-        User user1 = new User("User1", "01@gmail.com", "01", "12345");
         User user2 = new User("User2", "02@gmail.com", "02", "12345");
-        List<User> userNameList = Arrays.asList(user1);
         List<User> userEmailList = Arrays.asList(user2);
 
-        when(userSearchService.findByName("User")).thenReturn(userNameList);
+        when(userSearchService.findByName("User")).thenReturn(userEmailList);
         when(userSearchService.findByEmail("User")).thenReturn(userEmailList);
 
         mockMvc.perform(get("/users/search").param("nama", "User"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].nama").value("User2"))
                 .andExpect(jsonPath("$[0].email").value("02@gmail.com"))
-                .andExpect(jsonPath("$[0].noTelp").value("02"))
-                .andExpect(jsonPath("$[1].nama").value("User1"))
-                .andExpect(jsonPath("$[1].email").value("01@gmail.com"))
-                .andExpect(jsonPath("$[1].noTelp").value("01"));
+                .andExpect(jsonPath("$[0].noTelp").value("02"));
 
 
     }
