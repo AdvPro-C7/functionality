@@ -135,7 +135,8 @@ public class CartServiceImplTest {
 
                 ResponseEntity<?> response = cartService.addBookToCart(addBookCartDto);
 
-                assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+                assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+                assertEquals("Book is missing contact admin", response.getBody());
                 verify(cartItemRepository, never()).save(any());
                 verify(orderRepository, never()).save(any());
         }
