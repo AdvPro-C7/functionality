@@ -18,12 +18,12 @@ public class UserSearchByEmailRepositoryTest {
     @Test
     public void testFindByEmailStartingWithIfEmailValid() {
         User user1 = new User("Kim", "John@gmail.com", "0812", "Keren");
-        User user2 = new User("Han", "Jo@gmail.com", "0812", "Keren");
+        User user2 = new User("Han", "Jo@gmail.com", "081212", "Keren");
 
         userSearchByEmailRepository.save(user1);
         userSearchByEmailRepository.save(user2);
 
-        List<User> users = userSearchByEmailRepository.findByEmailStartingWith("J");
+        List<User> users = userSearchByEmailRepository.findByEmailContainingIgnoreCase("J");
 
         assertEquals(2, users.size());
     }
@@ -31,12 +31,12 @@ public class UserSearchByEmailRepositoryTest {
     @Test
     public void testFindByEmailStartingWithIfEmailNotValid() {
         User user1 = new User("John", "John@gmail.com", "0812", "Keren");
-        User user2 = new User("Jo", "Jo@gmail.com", "0812", "Keren");
+        User user2 = new User("Jo", "Jo@gmail.com", "081212", "Keren");
 
         userSearchByEmailRepository.save(user1);
         userSearchByEmailRepository.save(user2);
 
-        List<User> users = userSearchByEmailRepository.findByEmailStartingWith("A");
+        List<User> users = userSearchByEmailRepository.findByEmailContainingIgnoreCase("Z");
 
         assertEquals(0, users.size());
     }
@@ -44,12 +44,12 @@ public class UserSearchByEmailRepositoryTest {
     @Test
     public void testFindByEmailStartingWithIfOnlyMatchOneEmail() {
         User user1 = new User("Rey", "John@gmail.com", "0812", "Keren");
-        User user2 = new User("Lex", "Arthur@gmail.com", "0812", "Keren");
+        User user2 = new User("Lex", "Arthur@gmail.com", "081212", "Keren");
 
         userSearchByEmailRepository.save(user1);
         userSearchByEmailRepository.save(user2);
 
-        List<User> users = userSearchByEmailRepository.findByEmailStartingWith("Ar");
+        List<User> users = userSearchByEmailRepository.findByEmailContainingIgnoreCase("Ar");
 
         assertEquals(1, users.size());
     }
