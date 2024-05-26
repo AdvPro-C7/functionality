@@ -30,6 +30,10 @@ public class UserSearchController {
 
     }
 
+    @RequestMapping(value = "/users/{id}", method = RequestMethod.GET)
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        return null;
+    }
 
 
 }
