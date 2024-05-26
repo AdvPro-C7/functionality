@@ -58,12 +58,12 @@ public class UserSearchControllerTest {
         mockMvc.perform(get("/users/search").param("nama", "User"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].nama").value("User1"))
-                .andExpect(jsonPath("$[0].email").value("01@gmail.com"))
-                .andExpect(jsonPath("$[0].noTelp").value("01"))
-                .andExpect(jsonPath("$[1].nama").value("User2"))
-                .andExpect(jsonPath("$[1].email").value("02@gmail.com"))
-                .andExpect(jsonPath("$[1].noTelp").value("02"));
+                .andExpect(jsonPath("$[0].nama").value("User2"))
+                .andExpect(jsonPath("$[0].email").value("02@gmail.com"))
+                .andExpect(jsonPath("$[0].noTelp").value("02"))
+                .andExpect(jsonPath("$[1].nama").value("User1"))
+                .andExpect(jsonPath("$[1].email").value("01@gmail.com"))
+                .andExpect(jsonPath("$[1].noTelp").value("01"));
 
 
     }
