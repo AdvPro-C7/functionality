@@ -18,7 +18,16 @@ public class UserSearchController {
 
     @RequestMapping(value = "/users/search", method = RequestMethod.GET)
     public List<User> searchUsers(@RequestParam(required = false) String nama) {
-        return null;
+        Set<User> users = new HashSet<>();
+
+        List<User> userName = userSearchService.findByName(nama);
+        users.addAll(userName);
+
+        List<User> userEmail = userSearchService.findByEmail(nama);
+        users.addAll(userEmail);
+
+        return new ArrayList<>(users);
+
     }
 
 
