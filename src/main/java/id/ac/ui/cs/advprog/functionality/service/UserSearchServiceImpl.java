@@ -19,12 +19,12 @@ public class UserSearchServiceImpl implements UserSearchService{
 
     @Override
     public List<User> findByEmail (String email){
-        return userSearchByEmailRepository.findByEmailStartingWith(email);
+        return userSearchByEmailRepository.findByEmailContainingIgnoreCase(email);
     }
 
     @Override
     public List<User> findByName (String name){
-        return userSearchByNameRepository.findByNamaStartingWith(name);
+        return userSearchByNameRepository.findByNamaContainingIgnoreCase(name);
     }
 
 
