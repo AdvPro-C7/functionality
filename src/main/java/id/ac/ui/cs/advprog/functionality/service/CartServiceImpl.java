@@ -31,7 +31,7 @@ public class CartServiceImpl implements CartService {
 
     @Async
     public CompletableFuture<ResponseEntity<BookDto>> getBookDetails(int bookId) {
-        String bookServiceUrl = "http://localhost:8081/api/book-details/" + bookId;
+        String bookServiceUrl = "https://admin-hkqa74sxta-ew.a.run.app/api/book-details/" + bookId;
         try {
             ResponseEntity<BookDto> response = restTemplate.getForEntity(bookServiceUrl, BookDto.class);
             return CompletableFuture.completedFuture(response);
