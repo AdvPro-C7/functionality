@@ -13,7 +13,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @Import(CorsConfig.class)
 @EnableAsync
 @Configuration
-@ComponentScan("id.ac.ui.cs.advprog.functionality")
+@ComponentScan(basePackages = {"id.ac.ui.cs.advprog.functionality"})
 public class FunctionalityApplication {
 
 	public static void main(String[] args) {
